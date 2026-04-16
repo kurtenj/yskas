@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0f172a",
+  themeColor: "#ffffff",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -35,7 +35,7 @@ export default function RootLayout({
       <head>
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
-      <body className={`${geist.className} bg-slate-900 text-white antialiased`}>
+      <body className={`${geist.className} bg-white text-gray-900 antialiased`}>
         <ConvexClientProvider>
           <UserProvider>{children}</UserProvider>
         </ConvexClientProvider>

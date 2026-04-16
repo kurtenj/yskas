@@ -5,6 +5,9 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@/lib/user-context";
 import { useRouter } from "next/navigation";
+import { Button } from "@base-ui/react/button";
+import { Field } from "@base-ui/react/field";
+import { Input } from "@base-ui/react/input";
 
 interface Estimate {
   name: string;
@@ -79,126 +82,119 @@ export default function AddMealPage() {
 
   return (
     <div className="px-4 pt-6 max-w-lg mx-auto">
-      <h1 className="text-xl font-bold text-white mb-1">Log a Meal</h1>
-      <p className="text-slate-400 text-sm mb-6">Describe what you ate in plain language</p>
+      <h1 className="text-xl font-bold text-gray-900 mb-1">Log a Meal</h1>
+      <p className="text-gray-500 text-sm mb-6">Describe what you ate in plain language</p>
 
       {!estimate ? (
         <form onSubmit={handleEstimate} className="space-y-4">
-          <div>
+          <Field.Root>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="e.g. two slices of whole wheat toast with peanut butter and a banana"
               rows={4}
-              className="w-full bg-slate-800 text-white rounded-xl px-4 py-3 border border-slate-700 focus:outline-none focus:border-emerald-500 resize-none placeholder:text-slate-600 text-sm leading-relaxed"
+              className="w-full bg-white text-gray-900 rounded-xl px-4 py-3 border border-gray-200 focus:outline-none focus:border-gray-900 resize-none placeholder:text-gray-400 text-sm leading-relaxed"
               autoFocus
             />
-          </div>
+          </Field.Root>
 
           {error && (
-            <div className="bg-red-900/30 border border-red-800 rounded-xl px-4 py-3">
-              <p className="text-red-400 text-sm">{error}</p>
+            <div className="border border-red-200 bg-red-50 rounded-xl px-4 py-3">
+              <p className="text-red-600 text-sm">{error}</p>
             </div>
           )}
 
-          <button
+          <Button
             type="submit"
             disabled={!description.trim() || loading}
-            className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:text-slate-500 text-white font-semibold py-4 rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-gray-900 hover:bg-gray-700 disabled:bg-gray-100 disabled:text-gray-400 text-white font-semibold py-4 rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-gray-300 border-t-white rounded-full animate-spin" />
                 Estimating...
               </>
-            ) : (
-              <>
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-                Estimate calories
-              </>
-            )}
-          </button>
+            ) : "Estimate calories"}
+          </Button>
         </form>
       ) : (
         <div className="space-y-4">
           {/* Meal description recap */}
-          <div className="bg-slate-800/50 rounded-xl px-4 py-3">
-            <p className="text-slate-400 text-xs uppercase tracking-wide mb-1">You described</p>
-            <p className="text-white text-sm">{description}</p>
+          <div className="bg-gray-50 rounded-xl px-4 py-3">
+            <p className="text-gray-500 text-xs uppercase tracking-wide mb-1">You described</p>
+            <p className="text-gray-900 text-sm">{description}</p>
           </div>
 
           {/* Estimate card */}
-          <div className="bg-slate-800 border border-slate-700 rounded-xl p-5">
+          <div className="bg-white border border-gray-200 rounded-xl p-5">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <p className="text-slate-400 text-xs uppercase tracking-wide mb-1">Estimated meal</p>
-                <h2 className="text-white text-lg font-semibold">{estimate.name}</h2>
+                <p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Estimated meal</p>
+                <h2 className="text-gray-900 text-lg font-semibold">{estimate.name}</h2>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-bold text-emerald-400">{estimate.calories}</p>
-                <p className="text-slate-400 text-xs">calories</p>
+                <p className="text-3xl font-bold text-gray-900">{estimate.calories}</p>
+                <p className="text-gray-500 text-xs">calories</p>
               </div>
             </div>
 
             {(estimate.protein !== undefined || estimate.carbs !== undefined || estimate.fat !== undefined) && (
-              <div className="grid grid-cols-3 gap-3 pt-4 border-t border-slate-700">
+              <div className="grid grid-cols-3 gap-3 pt-4 border-t border-gray-200">
                 {estimate.protein !== undefined && (
                   <div className="text-center">
-                    <p className="text-white font-semibold">{estimate.protein}g</p>
-                    <p className="text-slate-500 text-xs">Protein</p>
+                    <p className="text-gray-900 font-semibold">{estimate.protein}g</p>
+                    <p className="text-gray-500 text-xs">Protein</p>
                   </div>
                 )}
                 {estimate.carbs !== undefined && (
                   <div className="text-center">
-                    <p className="text-white font-semibold">{estimate.carbs}g</p>
-                    <p className="text-slate-500 text-xs">Carbs</p>
+                    <p className="text-gray-900 font-semibold">{estimate.carbs}g</p>
+                    <p className="text-gray-500 text-xs">Carbs</p>
                   </div>
                 )}
                 {estimate.fat !== undefined && (
                   <div className="text-center">
-                    <p className="text-white font-semibold">{estimate.fat}g</p>
-                    <p className="text-slate-500 text-xs">Fat</p>
+                    <p className="text-gray-900 font-semibold">{estimate.fat}g</p>
+                    <p className="text-gray-500 text-xs">Fat</p>
                   </div>
                 )}
               </div>
             )}
           </div>
 
-          <p className="text-slate-600 text-xs text-center">
+          <p className="text-gray-400 text-xs text-center">
             AI estimates may vary. Edit calories below if needed.
           </p>
 
           {/* Calorie override */}
-          <div>
-            <label className="block text-slate-400 text-xs uppercase tracking-wide mb-1.5">
+          <Field.Root>
+            <Field.Label className="block text-gray-500 text-xs uppercase tracking-wide mb-1.5">
               Adjust calories (optional)
-            </label>
-            <input
+            </Field.Label>
+            <Input
               type="number"
               value={estimate.calories}
               onChange={(e) =>
                 setEstimate({ ...estimate, calories: parseInt(e.target.value, 10) || 0 })
               }
-              className="w-full bg-slate-800 text-white rounded-xl px-4 py-3 border border-slate-700 focus:outline-none focus:border-emerald-500 text-center text-xl font-bold"
+              className="w-full bg-white text-gray-900 rounded-xl px-4 py-3 border border-gray-200 focus:outline-none focus:border-gray-900 text-center text-xl font-bold"
             />
-          </div>
+          </Field.Root>
 
           <div className="flex gap-3">
-            <button
+            <Button
               onClick={handleReset}
-              className="flex-1 bg-slate-800 text-slate-300 rounded-xl py-4 font-medium"
+              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl py-4 font-medium transition-colors"
             >
               Re-enter
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleSave}
               disabled={saving}
-              className="flex-1 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-800 text-white rounded-xl py-4 font-semibold transition-colors"
+              className="flex-1 bg-gray-900 hover:bg-gray-700 disabled:bg-gray-100 disabled:text-gray-400 text-white rounded-xl py-4 font-semibold transition-colors"
             >
               {saving ? "Saving..." : "Save meal"}
-            </button>
+            </Button>
           </div>
         </div>
       )}

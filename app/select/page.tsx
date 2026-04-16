@@ -6,6 +6,10 @@ import { api } from "@/convex/_generated/api";
 import { useUser } from "@/lib/user-context";
 import { useRouter } from "next/navigation";
 import { Id } from "@/convex/_generated/dataModel";
+import { Button } from "@base-ui/react/button";
+import { Field } from "@base-ui/react/field";
+import { Input } from "@base-ui/react/input";
+import { CaretRight } from "@phosphor-icons/react";
 
 export default function SelectPage() {
   const users = useQuery(api.users.list);
@@ -41,97 +45,91 @@ export default function SelectPage() {
 
   if (users === undefined) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center px-6">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="text-4xl mb-3">👤</div>
-          <h1 className="text-2xl font-bold text-white">Who&apos;s tracking?</h1>
-          <p className="text-slate-400 mt-1 text-sm">Select your profile to continue</p>
+          <h1 className="text-2xl font-bold text-gray-900">Who&apos;s tracking?</h1>
+          <p className="text-gray-500 mt-1 text-sm">Select your profile to continue</p>
         </div>
 
         {!showCreate ? (
           <div className="space-y-3">
             {users.map((user) => (
-              <button
+              <Button
                 key={user._id}
                 onClick={() => selectUser(user._id)}
-                className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl px-5 py-4 text-left transition-colors"
+                className="w-full bg-white hover:bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 text-left transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-white font-semibold">{user.name}</p>
-                    <p className="text-slate-400 text-sm mt-0.5">
+                    <p className="text-gray-900 font-semibold">{user.name}</p>
+                    <p className="text-gray-500 text-sm mt-0.5">
                       Goal: {user.dailyCalorieGoal.toLocaleString()} cal/day
                     </p>
                   </div>
-                  <svg className="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                  <CaretRight size={20} className="text-gray-400" />
                 </div>
-              </button>
+              </Button>
             ))}
 
-            <button
+            <Button
               onClick={() => setShowCreate(true)}
-              className="w-full border border-dashed border-slate-600 hover:border-emerald-600 rounded-xl px-5 py-4 text-slate-400 hover:text-emerald-400 transition-colors flex items-center justify-center gap-2"
+              className="w-full border border-dashed border-gray-300 hover:border-gray-900 rounded-xl px-5 py-4 text-gray-500 hover:text-gray-900 transition-colors"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
               Add profile
-            </button>
+            </Button>
           </div>
         ) : (
           <form onSubmit={handleCreate} className="space-y-4">
-            <div>
-              <label className="block text-slate-400 text-sm mb-1.5">Name</label>
-              <input
+            <Field.Root>
+              <Field.Label className="block text-gray-500 text-sm mb-1.5">Name</Field.Label>
+              <Input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Jonathan"
-                className="w-full bg-slate-800 text-white rounded-xl px-4 py-3 border border-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-white text-gray-900 rounded-xl px-4 py-3 border border-gray-200 focus:outline-none focus:border-gray-900"
                 autoFocus
               />
-            </div>
+            </Field.Root>
 
-            <div>
-              <label className="block text-slate-400 text-sm mb-1.5">Daily calorie goal</label>
-              <input
+            <Field.Root>
+              <Field.Label className="block text-gray-500 text-sm mb-1.5">Daily calorie goal</Field.Label>
+              <Input
                 type="number"
                 value={goal}
                 onChange={(e) => setGoal(e.target.value)}
                 min="500"
                 max="5000"
-                className="w-full bg-slate-800 text-white rounded-xl px-4 py-3 border border-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-white text-gray-900 rounded-xl px-4 py-3 border border-gray-200 focus:outline-none focus:border-gray-900"
               />
-              <p className="text-slate-500 text-xs mt-1.5">
+              <p className="text-gray-500 text-xs mt-1.5">
                 Typical deficit goal: 1,500–1,800 cal/day
               </p>
-            </div>
+            </Field.Root>
 
             <div className="flex gap-3">
-              <button
+              <Button
                 type="button"
                 onClick={() => { setShowCreate(false); setName(""); setGoal("1800"); }}
-                className="flex-1 bg-slate-800 text-slate-300 rounded-xl py-3 font-medium"
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl py-3 font-medium transition-colors"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
                 disabled={!name.trim() || !goal || creating}
-                className="flex-1 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:text-slate-500 text-white rounded-xl py-3 font-semibold transition-colors"
+                className="flex-1 bg-gray-900 hover:bg-gray-700 disabled:bg-gray-100 disabled:text-gray-400 text-white rounded-xl py-3 font-semibold transition-colors"
               >
                 {creating ? "Creating..." : "Create"}
-              </button>
+              </Button>
             </div>
           </form>
         )}
