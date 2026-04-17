@@ -7,6 +7,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import Link from "next/link";
 import { Button } from "@base-ui/react/button";
 import { Armchair, Barbell, Bread, Trash } from "@phosphor-icons/react";
+import { motion } from "motion/react";
 
 function todayDate() {
   const d = new Date();
@@ -14,6 +15,9 @@ function todayDate() {
 }
 
 const TOTAL = 50;
+
+const DOT_DELAYS = Array.from({ length: TOTAL }, (_, i) => i * 0.025)
+  .sort(() => Math.random() - 0.5);
 
 function CalorieDotGrid({
   consumed,
@@ -41,7 +45,7 @@ function CalorieDotGrid({
     <div className="flex flex-col gap-6 py-4">
       <div className="grid grid-cols-10 gap-2">
         {dots.map((type, i) => (
-          <div
+          <motion.div
             key={i}
             className={`rounded-full aspect-square ${type === "other" ? "bg-mist-200" : type === "empty" ? "bg-mist-900" : ""}`}
             style={
@@ -49,6 +53,14 @@ function CalorieDotGrid({
                 ? { backgroundColor: "oklch(63.7% 0.237 25.3)" }
                 : undefined
             }
+            initial={{ y: -320, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{
+              type: "spring",
+              damping: 18,
+              stiffness: 120,
+              delay: DOT_DELAYS[i],
+            }}
           />
         ))}
       </div>
