@@ -6,7 +6,7 @@ import { useUser } from "@/lib/user-context";
 import { Id } from "@/convex/_generated/dataModel";
 import Link from "next/link";
 import { Button } from "@base-ui/react/button";
-import { Armchair, Barbell, Bread, Trash } from "@phosphor-icons/react";
+import { Barbell, Bread, Trash } from "@phosphor-icons/react";
 import { motion } from "motion/react";
 
 function todayDate() {
@@ -16,8 +16,9 @@ function todayDate() {
 
 const TOTAL = 50;
 
-const DOT_DELAYS = Array.from({ length: TOTAL }, (_, i) => i * 0.025)
-  .sort(() => Math.random() - 0.5);
+const DOT_DELAYS = Array.from({ length: TOTAL }, (_, i) => i * 0.01).sort(
+  () => Math.random() - 0.5,
+);
 
 function CalorieDotGrid({
   consumed,
@@ -47,7 +48,7 @@ function CalorieDotGrid({
         {dots.map((type, i) => (
           <motion.div
             key={i}
-            className={`rounded-full aspect-square ${type === "other" ? "bg-mist-200" : type === "empty" ? "bg-mist-900" : ""}`}
+            className={`rounded-full aspect-square ${type === "other" ? "bg-mist-200" : type === "empty" ? "bg-mist-800" : ""}`}
             style={
               type === "protein"
                 ? { backgroundColor: "oklch(63.7% 0.237 25.3)" }
@@ -57,14 +58,14 @@ function CalorieDotGrid({
             animate={{ y: 0, opacity: 1 }}
             transition={{
               type: "spring",
-              damping: 18,
-              stiffness: 120,
+              damping: 24,
+              stiffness: 320,
               delay: DOT_DELAYS[i],
             }}
           />
         ))}
       </div>
-      <div className="flex items-end justify-between text-mist-200">
+      <div className="flex items-end justify-between text-mist-200 mb-6">
         <div className="flex flex-col">
           <span className="text-7xl font-bold font-agdasima">
             {proteinG.toLocaleString()}
@@ -92,44 +93,36 @@ function MealItem({
     calories: number;
     protein?: number;
     carbs?: number;
-    fat?: number;
   };
   onDelete: (id: Id<"meals">) => void;
 }) {
-  const macros = [
-    meal.protein !== undefined && {
-      icon: Barbell,
-      value: meal.protein,
-      key: "p",
-    },
-    meal.carbs !== undefined && { icon: Bread, value: meal.carbs, key: "c" },
-    meal.fat !== undefined && { icon: Armchair, value: meal.fat, key: "f" },
-  ].filter(Boolean) as {
-    icon: React.ElementType;
-    value: number;
-    key: string;
-  }[];
+  const macros: [React.ElementType, number][] = (
+    [
+      [Barbell, meal.protein],
+      [Bread, meal.carbs],
+    ] as [React.ElementType, number | undefined][]
+  ).filter(([, v]) => v !== undefined) as [React.ElementType, number][];
 
   return (
     <div className="flex items-center gap-3 py-3">
       <div className="flex-1 min-w-0">
         <p className="text-mist-100 truncate">{meal.name}</p>
         {macros.length > 0 && (
-          <div className="flex items-center gap-2 mt-1">
-            {macros.map(({ icon: Icon, value, key }) => (
+          <div className="flex items-center gap-3 mt-1">
+            {macros.map(([Icon, value], i) => (
               <span
-                key={key}
-                className="flex items-center gap-1 text-mist-500 text-sm"
+                key={i}
+                className="flex items-center gap-1 text-mist-500 text-md"
               >
-                <Icon size={16} weight="fill" />
+                <Icon size={20} weight="fill" />
                 {value}g
               </span>
             ))}
           </div>
         )}
       </div>
-      <span className="text-mist-300 text-sm shrink-0">
-        {meal.calories} cal
+      <span className="text-mist-300 text-2xl shrink-0 font-agdasima">
+        {meal.calories}
       </span>
       <Button
         onClick={() => onDelete(meal._id)}

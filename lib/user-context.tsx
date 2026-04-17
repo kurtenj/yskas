@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 
 const USER_KEY = "yskas_user_id";
@@ -24,14 +18,9 @@ const UserContext = createContext<UserContextValue>({
 });
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [userId, setUserIdState] = useState<Id<"users"> | null>(null);
-
-  useEffect(() => {
-    const stored = localStorage.getItem(USER_KEY);
-    if (stored) {
-      setUserIdState(stored as Id<"users">);
-    }
-  }, []);
+  const [userId, setUserIdState] = useState<Id<"users"> | null>(
+    () => (localStorage.getItem(USER_KEY) as Id<"users"> | null) ?? null,
+  );
 
   function setUserId(id: Id<"users"> | null) {
     setUserIdState(id);

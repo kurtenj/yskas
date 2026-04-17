@@ -6,20 +6,20 @@ import { api } from "@/convex/_generated/api";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 import Link from "next/link";
-import { PlusCircle, Rows, User } from "@phosphor-icons/react";
+import { PlusCircle, ListNumbers, UserSwitch } from "@phosphor-icons/react";
 import { motion } from "motion/react";
 
 const tabs = [
   { href: "/add", label: "Add", icon: PlusCircle },
-  { href: "/history", label: "History", icon: Rows },
-  { href: "/settings", label: "Settings", icon: User },
+  { href: "/history", label: "History", icon: ListNumbers },
+  { href: "/settings", label: "Settings", icon: UserSwitch },
 ] as const;
 
 function Logo({ className }: { className?: string }) {
   return (
     <svg
-      width="32"
-      height="32"
+      width="26"
+      height="26"
       className={className}
       viewBox="0 0 40 40"
       fill="none"
@@ -44,16 +44,16 @@ function NavBar() {
 
   return (
     <div className="fixed left-0 bottom-6 right-6 flex justify-end z-50">
-      <nav className="flex items-center gap-1 bg-mist-900/50 backdrop-blur-sm rounded-full shadow-lg overflow-hidden p-1">
+      <nav className="flex items-center gap-1 bg-mist-900/75 backdrop-blur-sm rounded-full overflow-hidden p-1">
         <Link
           href="/"
           aria-label="Today"
-          className="relative w-16 h-16 flex items-center justify-center"
+          className="relative w-14 h-14 flex items-center justify-center"
         >
           {isActive("/") && (
             <motion.div
               layoutId="nav-indicator"
-              className="absolute inset-0 rounded-full bg-mist-800/50"
+              className="absolute inset-0 rounded-full bg-mist-700/50"
               transition={{ type: "spring", stiffness: 350, damping: 22 }}
             />
           )}
@@ -64,18 +64,18 @@ function NavBar() {
             key={href}
             href={href}
             aria-label={label}
-            className={`relative flex items-center justify-center w-16 h-16 transition-colors ${
-              isActive(href) ? "text-mist-50" : "text-mist-500"
+            className={`relative flex items-center justify-center w-14 h-14 transition-colors ${
+              isActive(href) ? "text-mist-200" : "text-mist-600"
             }`}
           >
             {isActive(href) && (
               <motion.div
                 layoutId="nav-indicator"
-                className="absolute inset-0 rounded-full bg-mist-800/50"
+                className="absolute inset-0 rounded-full bg-mist-700/50"
                 transition={{ type: "spring", stiffness: 350, damping: 22 }}
               />
             )}
-            <Icon size={32} weight="fill" className="relative z-10" />
+            <Icon size={32} weight="regular" className="relative z-10" />
           </Link>
         ))}
       </nav>
