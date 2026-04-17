@@ -163,13 +163,14 @@ export default function TodayPage() {
   });
 
   return (
-    <div className="px-6 pt-6 max-w-lg mx-auto">
-      <div className="flex items-center justify-between mb-4 text-mist-200">
-        <p>{dateLabel}</p>
-        <p>{user.name}</p>
+    <div className="h-dvh flex flex-col pb-20 max-w-lg mx-auto">
+      <div className="px-6 pt-6 shrink-0">
+        <div className="flex items-center justify-between mb-4 text-mist-200">
+          <p>{dateLabel}</p>
+          <p>{user.name}</p>
+        </div>
+        <CalorieDotGrid consumed={consumed} goal={goal} proteinG={proteinG} />
       </div>
-
-      <CalorieDotGrid consumed={consumed} goal={goal} proteinG={proteinG} />
 
       {meals.length === 0 ? (
         <div className="text-center py-12">
@@ -182,14 +183,16 @@ export default function TodayPage() {
           </Link>
         </div>
       ) : (
-        <div className="bg-mist-900 rounded-lg px-4 flex flex-col divide-y divide-mist-950">
-          {meals.map((meal) => (
-            <MealItem
-              key={meal._id}
-              meal={meal}
-              onDelete={(id) => removeMeal({ id })}
-            />
-          ))}
+        <div className="px-6 overflow-y-auto flex-1 pb-4">
+          <div className="bg-mist-900 rounded-lg px-4 flex flex-col divide-y divide-mist-950">
+            {meals.map((meal) => (
+              <MealItem
+                key={meal._id}
+                meal={meal}
+                onDelete={(id) => removeMeal({ id })}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>

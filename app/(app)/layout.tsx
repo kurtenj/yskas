@@ -44,7 +44,7 @@ function NavBar() {
 
   return (
     <div className="fixed left-0 bottom-6 right-6 flex justify-end z-50">
-      <nav className="flex items-center gap-1 bg-mist-900/75 backdrop-blur-sm rounded-full overflow-hidden p-1">
+      <nav className="flex items-center gap-1 bg-mist-900/75 backdrop-blur-sm rounded-full overflow-hidden p-1 border border-mist-800">
         <Link
           href="/"
           aria-label="Today"

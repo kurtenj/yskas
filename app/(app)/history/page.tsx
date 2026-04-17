@@ -78,29 +78,31 @@ export default function HistoryPage() {
   const weekGoal = goal * 7;
 
   return (
-    <div className="px-4 pt-6 max-w-lg mx-auto">
-      <h1 className="text-xl font-bold text-mist-50 mb-1">History</h1>
-      <p className="text-mist-400 text-sm mb-5">Last 7 days</p>
+    <div className="h-dvh flex flex-col pb-20 max-w-lg mx-auto px-4 pt-6">
+      <div className="shrink-0">
+        <h1 className="text-xl font-bold text-mist-50 mb-1">History</h1>
+        <p className="text-mist-400 text-sm mb-5">Last 7 days</p>
 
-      {/* Weekly summary card */}
-      <div className="bg-mist-900 border border-mist-800 rounded-xl p-4 mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-mist-500 text-xs uppercase tracking-wide">This week</p>
-            <p className="text-2xl font-bold text-mist-50 mt-0.5">
-              {weekTotal.toLocaleString()} <span className="text-mist-400 text-sm font-normal">cal</span>
-            </p>
+        {/* Weekly summary card */}
+        <div className="bg-mist-900 border border-mist-800 rounded-xl p-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-mist-500 text-xs uppercase tracking-wide">This week</p>
+              <p className="text-2xl font-bold text-mist-50 mt-0.5">
+                {weekTotal.toLocaleString()} <span className="text-mist-400 text-sm font-normal">cal</span>
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-mist-500 text-xs">Goal</p>
+              <p className="text-mist-50 text-sm font-medium">{weekGoal.toLocaleString()}</p>
+            </div>
           </div>
-          <div className="text-right">
-            <p className="text-mist-500 text-xs">Goal</p>
-            <p className="text-mist-50 text-sm font-medium">{weekGoal.toLocaleString()}</p>
-          </div>
+          <ProgressBar value={weekTotal} max={weekGoal} />
         </div>
-        <ProgressBar value={weekTotal} max={weekGoal} />
       </div>
 
       {/* Day-by-day */}
-      <div className="space-y-3">
+      <div className="overflow-y-auto flex-1 pb-4 space-y-3">
         {dates.map((date) => {
           const dayMeals = byDate[date] ?? [];
           const dayTotal = dayMeals.reduce((sum, m) => sum + m.calories, 0);
@@ -135,4 +137,5 @@ export default function HistoryPage() {
       </div>
     </div>
   );
+
 }
