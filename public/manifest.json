@@ -4,8 +4,8 @@
   "description": "AI-powered meal calorie tracker",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#090b0c",
+  "theme_color": "#090b0c",
   "orientation": "portrait",
   "icons": [
     {
