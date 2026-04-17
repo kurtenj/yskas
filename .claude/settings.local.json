@@ -16,7 +16,8 @@
       "Bash(node -e \"const p = require\\('@phosphor-icons/react'\\); console.log\\(Object.keys\\(p\\).filter\\(k => /food|meal|eat|carb|rice|pasta|pizza|fork/i.test\\(k\\)\\)\\)\")",
       "Bash(node -e \"const p = require\\('@phosphor-icons/react'\\); console.log\\(Object.keys\\(p\\).filter\\(k => /drop|oil|fat|butter|avocado/i.test\\(k\\)\\)\\)\")",
       "Bash(node -e \"const p = require\\('@phosphor-icons/react'\\); console.log\\(Object.keys\\(p\\).slice\\(0,20\\)\\)\")",
-      "Bash(node -e \"const p = require\\('@phosphor-icons/react'\\); console.log\\(Object.keys\\(p\\).filter\\(k => /grain|fire|flame|lightning|bolt|leaf|plant|wave|drop|water/i.test\\(k\\)\\)\\)\")"
+      "Bash(node -e \"const p = require\\('@phosphor-icons/react'\\); console.log\\(Object.keys\\(p\\).filter\\(k => /grain|fire|flame|lightning|bolt|leaf|plant|wave|drop|water/i.test\\(k\\)\\)\\)\")",
+      "WebFetch(domain:base-ui.com)"
     ]
   }
 }

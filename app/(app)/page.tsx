@@ -51,7 +51,7 @@ function CalorieDotGrid({
             className={`rounded-full aspect-square ${type === "other" ? "bg-mist-200" : type === "empty" ? "bg-mist-800" : ""}`}
             style={
               type === "protein"
-                ? { backgroundColor: "oklch(63.7% 0.237 25.3)" }
+                ? { backgroundColor: "oklch(71.5% 0.143 215.221)" }
                 : undefined
             }
             initial={{ y: -320, opacity: 0 }}
@@ -185,7 +185,11 @@ export default function TodayPage() {
       ) : (
         <div
           className="px-6 overflow-y-auto flex-1 pb-4"
-          style={{ maskImage: "linear-gradient(to bottom, transparent, black 2rem)", WebkitMaskImage: "linear-gradient(to bottom, transparent, black 2rem)" }}
+          style={{
+            maskImage: "linear-gradient(to bottom, transparent, black 2rem)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent, black 2rem)",
+          }}
         >
           <div className="bg-mist-900 rounded-lg px-4 flex flex-col divide-y divide-mist-950">
             {meals.map((meal) => (
