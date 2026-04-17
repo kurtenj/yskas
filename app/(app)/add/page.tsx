@@ -100,8 +100,8 @@ export default function AddMealPage() {
           </Field.Root>
 
           {error && (
-            <div className="border border-red-900 bg-red-950 rounded-xl px-4 py-3">
-              <p className="text-red-400 text-sm">{error}</p>
+            <div className="border border-cyan-900 bg-cyan-950 rounded-xl px-4 py-3">
+              <p className="text-cyan-500 text-sm">{error}</p>
             </div>
           )}
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@/lib/user-context";
@@ -38,7 +39,7 @@ function ProgressBar({ value, max }: { value: number; max: number }) {
     <Progress.Root value={value} max={max} className="mt-2">
       <Progress.Track className="h-1.5 bg-mist-800 rounded-full overflow-hidden">
         <Progress.Indicator
-          className={`h-full rounded-full transition-all ${over ? "bg-red-500" : "bg-mist-100"}`}
+          className={`h-full rounded-full transition-all ${over ? "bg-cyan-500" : "bg-mist-100"}`}
           style={{ width: `${Math.min((value / max) * 100, 100)}%` }}
         />
       </Progress.Track>
@@ -49,6 +50,7 @@ function ProgressBar({ value, max }: { value: number; max: number }) {
 export default function HistoryPage() {
   const { userId } = useUser();
   const dates = getLast7Days();
+  const [scrolled, setScrolled] = useState(false);
 
   const user = useQuery(api.users.get, userId ? { id: userId } : "skip");
   const meals = useQuery(
@@ -78,7 +80,7 @@ export default function HistoryPage() {
   const weekGoal = goal * 7;
 
   return (
-    <div className="h-dvh flex flex-col pb-20 max-w-lg mx-auto px-4 pt-6">
+    <div className="h-dvh flex flex-col max-w-lg mx-auto px-4 pt-6">
       <div className="shrink-0">
         <h1 className="text-xl font-bold text-mist-50 mb-1">History</h1>
         <p className="text-mist-400 text-sm mb-5">Last 7 days</p>
@@ -103,8 +105,9 @@ export default function HistoryPage() {
 
       {/* Day-by-day */}
       <div
-        className="overflow-y-auto flex-1 pb-4 space-y-3"
-        style={{ maskImage: "linear-gradient(to bottom, transparent, black 2rem)", WebkitMaskImage: "linear-gradient(to bottom, transparent, black 2rem)" }}
+        className="overflow-y-auto flex-1 pb-20 space-y-3"
+        onScroll={(e) => setScrolled(e.currentTarget.scrollTop > 0)}
+        style={scrolled ? { maskImage: "linear-gradient(to bottom, transparent, black 2rem)", WebkitMaskImage: "linear-gradient(to bottom, transparent, black 2rem)" } : undefined}
       >
         {dates.map((date) => {
           const dayMeals = byDate[date] ?? [];
@@ -116,7 +119,7 @@ export default function HistoryPage() {
             <div key={date} className="bg-mist-900 rounded-xl p-4">
               <div className="flex items-center justify-between mb-1">
                 <p className="text-mist-50 font-medium text-sm">{formatDate(date)}</p>
-                <p className={`font-semibold text-sm ${!hasData ? "text-mist-600" : over ? "text-red-400" : "text-mist-50"}`}>
+                <p className={`font-semibold text-sm ${!hasData ? "text-mist-600" : over ? "text-cyan-500" : "text-mist-50"}`}>
                   {hasData ? `${dayTotal.toLocaleString()} cal` : "—"}
                 </p>
               </div>

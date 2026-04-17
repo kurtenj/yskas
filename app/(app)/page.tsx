@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@/lib/user-context";
@@ -143,6 +144,7 @@ export default function TodayPage() {
     userId ? { userId, date: todayDate() } : "skip",
   );
   const removeMeal = useMutation(api.meals.remove);
+  const [scrolled, setScrolled] = useState(false);
 
   if (!userId || user === undefined || user === null || meals === undefined) {
     return (
@@ -163,7 +165,7 @@ export default function TodayPage() {
   });
 
   return (
-    <div className="h-dvh flex flex-col pb-20 max-w-lg mx-auto">
+    <div className="h-dvh flex flex-col max-w-lg mx-auto">
       <div className="px-6 pt-6 shrink-0">
         <div className="flex items-center justify-between mb-4 text-mist-200">
           <p>{dateLabel}</p>
@@ -184,12 +186,12 @@ export default function TodayPage() {
         </div>
       ) : (
         <div
-          className="px-6 overflow-y-auto flex-1 pb-4"
-          style={{
+          className="px-6 overflow-y-auto flex-1 pb-20"
+          onScroll={(e) => setScrolled(e.currentTarget.scrollTop > 0)}
+          style={scrolled ? {
             maskImage: "linear-gradient(to bottom, transparent, black 2rem)",
-            WebkitMaskImage:
-              "linear-gradient(to bottom, transparent, black 2rem)",
-          }}
+            WebkitMaskImage: "linear-gradient(to bottom, transparent, black 2rem)",
+          } : undefined}
         >
           <div className="bg-mist-900 rounded-lg px-4 flex flex-col divide-y divide-mist-950">
             {meals.map((meal) => (

@@ -76,7 +76,7 @@ export default function PinPage() {
             ))}
           </OTPField.Root>
 
-          {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+          {error && <p className="text-cyan-500 text-sm text-center">{error}</p>}
 
           {loading && (
             <p className="text-mist-500 text-sm text-center">Checking...</p>
