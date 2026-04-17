@@ -102,7 +102,10 @@ export default function HistoryPage() {
       </div>
 
       {/* Day-by-day */}
-      <div className="overflow-y-auto flex-1 pb-4 space-y-3">
+      <div
+        className="overflow-y-auto flex-1 pb-4 space-y-3"
+        style={{ maskImage: "linear-gradient(to bottom, transparent, black 2rem)", WebkitMaskImage: "linear-gradient(to bottom, transparent, black 2rem)" }}
+      >
         {dates.map((date) => {
           const dayMeals = byDate[date] ?? [];
           const dayTotal = dayMeals.reduce((sum, m) => sum + m.calories, 0);

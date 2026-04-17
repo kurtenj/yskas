@@ -183,7 +183,10 @@ export default function TodayPage() {
           </Link>
         </div>
       ) : (
-        <div className="px-6 overflow-y-auto flex-1 pb-4">
+        <div
+          className="px-6 overflow-y-auto flex-1 pb-4"
+          style={{ maskImage: "linear-gradient(to bottom, transparent, black 2rem)", WebkitMaskImage: "linear-gradient(to bottom, transparent, black 2rem)" }}
+        >
           <div className="bg-mist-900 rounded-lg px-4 flex flex-col divide-y divide-mist-950">
             {meals.map((meal) => (
               <MealItem
