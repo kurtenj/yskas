@@ -19,7 +19,7 @@ function NavBar() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex z-50 pb-safe">
+    <nav className="fixed bottom-0 left-0 right-0 bg-mist-950 border-t border-mist-800 flex z-50 pb-safe">
       {tabs.map(({ href, label, icon: Icon }) => {
         const active = pathname === href;
         return (
@@ -27,7 +27,7 @@ function NavBar() {
             key={href}
             href={href}
             className={`flex-1 flex flex-col items-center py-3 gap-1 transition-colors ${
-              active ? "text-gray-900" : "text-gray-400"
+              active ? "text-mist-50" : "text-mist-600"
             }`}
           >
             <Icon size={24} />
@@ -62,7 +62,7 @@ function AppGuard({ children }: { children: React.ReactNode }) {
   if (!userId || users === undefined) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-mist-800 border-t-mist-100 rounded-full animate-spin" />
       </div>
     );
   }

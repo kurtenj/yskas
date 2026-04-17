@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-agdasima: var(--font-agdasima), ui-sans-serif, system-ui, sans-serif;
+}
+
 /* Safe area for iPhone home indicator */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .pb-safe {

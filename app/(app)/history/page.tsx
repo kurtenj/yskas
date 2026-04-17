@@ -36,9 +36,9 @@ function ProgressBar({ value, max }: { value: number; max: number }) {
   const over = value > max;
   return (
     <Progress.Root value={value} max={max} className="mt-2">
-      <Progress.Track className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+      <Progress.Track className="h-1.5 bg-mist-800 rounded-full overflow-hidden">
         <Progress.Indicator
-          className={`h-full rounded-full transition-all ${over ? "bg-red-500" : "bg-gray-900"}`}
+          className={`h-full rounded-full transition-all ${over ? "bg-red-500" : "bg-mist-100"}`}
           style={{ width: `${Math.min((value / max) * 100, 100)}%` }}
         />
       </Progress.Track>
@@ -59,7 +59,7 @@ export default function HistoryPage() {
   if (!userId || meals === undefined || user === undefined) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-mist-800 border-t-mist-100 rounded-full animate-spin" />
       </div>
     );
   }
@@ -79,21 +79,21 @@ export default function HistoryPage() {
 
   return (
     <div className="px-4 pt-6 max-w-lg mx-auto">
-      <h1 className="text-xl font-bold text-gray-900 mb-1">History</h1>
-      <p className="text-gray-500 text-sm mb-5">Last 7 days</p>
+      <h1 className="text-xl font-bold text-mist-50 mb-1">History</h1>
+      <p className="text-mist-400 text-sm mb-5">Last 7 days</p>
 
       {/* Weekly summary card */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6">
+      <div className="bg-mist-900 border border-mist-800 rounded-xl p-4 mb-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-gray-500 text-xs uppercase tracking-wide">This week</p>
-            <p className="text-2xl font-bold text-gray-900 mt-0.5">
-              {weekTotal.toLocaleString()} <span className="text-gray-500 text-sm font-normal">cal</span>
+            <p className="text-mist-500 text-xs uppercase tracking-wide">This week</p>
+            <p className="text-2xl font-bold text-mist-50 mt-0.5">
+              {weekTotal.toLocaleString()} <span className="text-mist-400 text-sm font-normal">cal</span>
             </p>
           </div>
           <div className="text-right">
-            <p className="text-gray-500 text-xs">Goal</p>
-            <p className="text-gray-900 text-sm font-medium">{weekGoal.toLocaleString()}</p>
+            <p className="text-mist-500 text-xs">Goal</p>
+            <p className="text-mist-50 text-sm font-medium">{weekGoal.toLocaleString()}</p>
           </div>
         </div>
         <ProgressBar value={weekTotal} max={weekGoal} />
@@ -108,10 +108,10 @@ export default function HistoryPage() {
           const hasData = dayMeals.length > 0;
 
           return (
-            <div key={date} className="bg-gray-50 rounded-xl p-4">
+            <div key={date} className="bg-mist-900 rounded-xl p-4">
               <div className="flex items-center justify-between mb-1">
-                <p className="text-gray-900 font-medium text-sm">{formatDate(date)}</p>
-                <p className={`font-semibold text-sm ${!hasData ? "text-gray-400" : over ? "text-red-600" : "text-gray-900"}`}>
+                <p className="text-mist-50 font-medium text-sm">{formatDate(date)}</p>
+                <p className={`font-semibold text-sm ${!hasData ? "text-mist-600" : over ? "text-red-400" : "text-mist-50"}`}>
                   {hasData ? `${dayTotal.toLocaleString()} cal` : "—"}
                 </p>
               </div>
@@ -120,14 +120,14 @@ export default function HistoryPage() {
                 <div className="mt-2 space-y-1">
                   {dayMeals.map((m) => (
                     <div key={m._id} className="flex justify-between text-xs">
-                      <span className="text-gray-500 truncate">{m.name}</span>
-                      <span className="text-gray-400 ml-2 shrink-0">{m.calories} cal</span>
+                      <span className="text-mist-400 truncate">{m.name}</span>
+                      <span className="text-mist-600 ml-2 shrink-0">{m.calories} cal</span>
                     </div>
                   ))}
                 </div>
               )}
               {!hasData && (
-                <p className="text-gray-400 text-xs mt-1">No meals logged</p>
+                <p className="text-mist-600 text-xs mt-1">No meals logged</p>
               )}
             </div>
           );

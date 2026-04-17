@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Agdasima } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "./convex-provider";
 import { UserProvider } from "@/lib/user-context";
 
-const geist = Geist({ subsets: ["latin"] });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
+const agdasima = Agdasima({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-agdasima" });
 
 export const metadata: Metadata = {
   title: "Yskas",
@@ -35,7 +36,7 @@ export default function RootLayout({
       <head>
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
-      <body className={`${geist.className} bg-white text-gray-900 antialiased`}>
+      <body className={`${geist.variable} ${agdasima.variable} font-sans bg-mist-950 text-mist-50 antialiased`}>
         <ConvexClientProvider>
           <UserProvider>{children}</UserProvider>
         </ConvexClientProvider>
