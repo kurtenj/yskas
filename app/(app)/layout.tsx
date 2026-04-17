@@ -18,8 +18,8 @@ const tabs = [
 function Logo({ className }: { className?: string }) {
   return (
     <svg
-      width="20"
-      height="20"
+      width="32"
+      height="32"
       className={className}
       viewBox="0 0 40 40"
       fill="none"
@@ -48,7 +48,7 @@ function NavBar() {
         <Link
           href="/"
           aria-label="Today"
-          className="relative w-10 h-10 flex items-center justify-center"
+          className="relative w-16 h-16 flex items-center justify-center"
         >
           {isActive("/") && (
             <motion.div
@@ -64,7 +64,7 @@ function NavBar() {
             key={href}
             href={href}
             aria-label={label}
-            className={`relative flex items-center justify-center w-10 h-10 transition-colors ${
+            className={`relative flex items-center justify-center w-16 h-16 transition-colors ${
               isActive(href) ? "text-mist-50" : "text-mist-500"
             }`}
           >
@@ -75,7 +75,7 @@ function NavBar() {
                 transition={{ type: "spring", stiffness: 350, damping: 22 }}
               />
             )}
-            <Icon size={24} weight="fill" className="relative z-10" />
+            <Icon size={32} weight="fill" className="relative z-10" />
           </Link>
         ))}
       </nav>
