@@ -19,7 +19,10 @@ const UserContext = createContext<UserContextValue>({
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [userId, setUserIdState] = useState<Id<"users"> | null>(
-    () => (localStorage.getItem(USER_KEY) as Id<"users"> | null) ?? null,
+    () =>
+      typeof window === "undefined"
+        ? null
+        : (localStorage.getItem(USER_KEY) as Id<"users"> | null),
   );
 
   function setUserId(id: Id<"users"> | null) {
