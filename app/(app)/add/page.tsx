@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@base-ui/react/button";
 import { Field } from "@base-ui/react/field";
 import { Input } from "@base-ui/react/input";
+import { ShimmerText } from "./shimmer-text";
 
 interface Estimate {
   name: string;
@@ -105,18 +106,19 @@ export default function AddMealPage() {
             </div>
           )}
 
-          <Button
-            type="submit"
-            disabled={!description.trim() || loading}
-            className="w-full bg-mist-100 hover:bg-mist-200 disabled:bg-mist-800 disabled:text-mist-600 text-mist-950 font-semibold py-4 rounded-xl transition-colors flex items-center justify-center gap-2"
-          >
-            {loading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-mist-400 border-t-mist-950 rounded-full animate-spin" />
-                Estimating...
-              </>
-            ) : "Estimate calories"}
-          </Button>
+          {loading ? (
+            <div className="w-full flex items-center justify-center py-4">
+              <ShimmerText />
+            </div>
+          ) : (
+            <Button
+              type="submit"
+              disabled={!description.trim()}
+              className="w-full bg-mist-100 hover:bg-mist-200 disabled:bg-mist-800 disabled:text-mist-600 text-mist-950 font-semibold py-4 rounded-xl transition-colors"
+            >
+              Estimate calories
+            </Button>
+          )}
         </form>
       ) : (
         <div className="space-y-4">

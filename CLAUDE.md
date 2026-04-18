@@ -39,3 +39,15 @@ The frontend calls Convex queries/mutations directly from React components using
 ### Styling
 
 Tailwind CSS v4 with a custom `mist` color palette (dark neutral, base color `#090b0c` = `mist-950`). Dark mode is the only mode. Theme color for PWA/browser chrome is `#090b0c`. Fonts: Geist (body, `--font-geist`) and Agdasima (display, `--font-agdasima`).
+
+Do not use `theme()` in `globals.css` — Tailwind v4 silently drops rules that use it. Use hardcoded hex values or CSS custom properties (`var(--color-mist-*)`) instead.
+
+### UI Components
+
+Interactive elements use [Base UI](https://base-ui.com) (`@base-ui/react`). Use `Button`, `Field`, `Input`, `Field.Root`, `Field.Label` etc. from Base UI rather than plain HTML where possible. Base UI has no textarea component — use a plain `<textarea>` inside `Field.Root` for accessibility context. `Field.Control` is typed as `input` only and will cause type errors if used with a textarea.
+
+`lib/utils.ts` exports `cn()` (clsx + tailwind-merge) for className composition.
+
+### Animation
+
+`motion/react` (the `motion` package) is installed. The add page uses a `ShimmeringText` component (`app/(app)/add/shimmer-text.tsx`) for AI loading state — it's a port of the ElevenLabs UI shimmer pattern using `motion` `backgroundPosition` animation with CSS custom properties for color and spread.

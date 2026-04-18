@@ -17,7 +17,24 @@
       "Bash(node -e \"const p = require\\('@phosphor-icons/react'\\); console.log\\(Object.keys\\(p\\).filter\\(k => /drop|oil|fat|butter|avocado/i.test\\(k\\)\\)\\)\")",
       "Bash(node -e \"const p = require\\('@phosphor-icons/react'\\); console.log\\(Object.keys\\(p\\).slice\\(0,20\\)\\)\")",
       "Bash(node -e \"const p = require\\('@phosphor-icons/react'\\); console.log\\(Object.keys\\(p\\).filter\\(k => /grain|fire|flame|lightning|bolt|leaf|plant|wave|drop|water/i.test\\(k\\)\\)\\)\")",
-      "WebFetch(domain:base-ui.com)"
+      "WebFetch(domain:base-ui.com)",
+      "Bash(xargs grep *)",
+      "WebFetch(domain:ui.elevenlabs.io)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(npm info *)",
+      "Bash(npx @elevenlabs/cli@latest components add shimmering-text --yes)",
+      "Bash(npx @elevenlabs/cli@latest components add shimmering-text)",
+      "Bash(node -e \"require\\('child_process'\\).execSync\\('npx @elevenlabs/cli@latest components add shimmering-text', {stdio:'inherit'}\\)\")",
+      "Bash(/c/Users/Jonathan/AppData/Roaming/nvm/v22.16.0/npx @elevenlabs/cli@latest components add shimmering-text)",
+      "Bash(where npm *)",
+      "Bash(where npx *)",
+      "Bash(\"/c/Program Files/nodejs/npx\" @elevenlabs/cli@latest components add shimmering-text)",
+      "Bash(pnpm dlx *)",
+      "Bash(where pnpm *)",
+      "Read(//c/Users/Jonathan/AppData/Roaming/npm/**)",
+      "Bash(where yarn *)",
+      "Bash(where bun *)"
     ]
   }
 }
