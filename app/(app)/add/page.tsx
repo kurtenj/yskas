@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useMutation } from "convex/react";
+import { useMemo, useState } from "react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@/lib/user-context";
 import { useRouter } from "next/navigation";
@@ -9,6 +9,7 @@ import { Button } from "@base-ui/react/button";
 import { Field } from "@base-ui/react/field";
 import { Input } from "@base-ui/react/input";
 import { ShimmerText } from "./shimmer-text";
+import Fuse from "fuse.js";
 
 interface Estimate {
   name: string;
@@ -23,6 +24,16 @@ function todayDate() {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
+function getLast7Days(): string[] {
+  const dates: string[] = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    dates.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`);
+  }
+  return dates;
+}
+
 export default function AddMealPage() {
   const { userId } = useUser();
   const addMeal = useMutation(api.meals.add);
@@ -33,6 +44,30 @@ export default function AddMealPage() {
   const [estimate, setEstimate] = useState<Estimate | null>(null);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const recentMeals = useQuery(
+    api.meals.forDateRange,
+    userId ? { userId, dates: getLast7Days() } : "skip"
+  );
+
+  const uniqueMeals = useMemo(() => {
+    if (!recentMeals) return [];
+    const seen = new Map<string, typeof recentMeals[0]>();
+    for (const meal of [...recentMeals].sort((a, b) => b.createdAt - a.createdAt)) {
+      if (!seen.has(meal.name)) seen.set(meal.name, meal);
+    }
+    return Array.from(seen.values());
+  }, [recentMeals]);
+
+  const fuse = useMemo(
+    () => new Fuse(uniqueMeals, { keys: ["name", "description"], threshold: 0.4 }),
+    [uniqueMeals]
+  );
+
+  const suggestions = useMemo(() => {
+    if (description.trim().length < 2 || uniqueMeals.length === 0) return [];
+    return fuse.search(description.trim()).slice(0, 3).map((r) => r.item);
+  }, [description, fuse, uniqueMeals]);
 
   async function handleEstimate(e: React.FormEvent) {
     e.preventDefault();
@@ -99,6 +134,31 @@ export default function AddMealPage() {
               autoFocus
             />
           </Field.Root>
+
+          {suggestions.length > 0 && (
+            <div className="space-y-1.5">
+              <p className="text-mist-500 text-xs uppercase tracking-wide">Log again</p>
+              {suggestions.map((meal) => (
+                <button
+                  key={meal._id}
+                  type="button"
+                  onClick={() => setEstimate({
+                    name: meal.name,
+                    calories: meal.calories,
+                    protein: meal.protein,
+                    carbs: meal.carbs,
+                    fat: meal.fat,
+                  })}
+                  className="w-full text-left bg-mist-900 hover:bg-mist-800 border border-mist-800 rounded-xl px-4 py-3 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-mist-100 text-sm font-medium truncate pr-3">{meal.name}</span>
+                    <span className="text-mist-400 text-sm shrink-0">{meal.calories} cal</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
 
           {error && (
             <div className="border border-cyan-900 bg-cyan-950 rounded-xl px-4 py-3">

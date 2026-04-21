@@ -36,6 +36,14 @@ There is no traditional auth. Users are selected from a list on first visit (`/s
 
 The frontend calls Convex queries/mutations directly from React components using the Convex React client. `convex/meals.ts` and `convex/users.ts` contain all backend logic. Dates are stored as `YYYY-MM-DD` strings in local time — never use UTC date methods when constructing date keys.
 
+### Data Retention
+
+Meals older than 7 days are purged nightly by a Convex cron job (`convex/crons.ts`). The entire app is intentionally scoped to a 7-day window — the history page shows last 7 days, the meal suggestion index covers last 7 days, and no feature should rely on data beyond that.
+
+### Meal Suggestions (Re-log)
+
+The add page (`app/(app)/add/page.tsx`) loads the last 7 days of meals and deduplicates them by `name` (most recent entry wins). A Fuse.js index is built from this unique set and searched on each keystroke after 2 characters. Matching meals appear as "Log again" cards that set `estimate` state directly, bypassing the `/api/estimate` AI call entirely. The Fuse index is memoized separately from the search so it only rebuilds when meal data changes, not on every keystroke.
+
 ### Styling
 
 Tailwind CSS v4 with a custom `mist` color palette (dark neutral, base color `#090b0c` = `mist-950`). Dark mode is the only mode. Theme color for PWA/browser chrome is `#090b0c`. Fonts: Geist (body, `--font-geist`) and Agdasima (display, `--font-agdasima`).
