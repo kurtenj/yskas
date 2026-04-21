@@ -9,11 +9,7 @@ import Link from "next/link";
 import { Button } from "@base-ui/react/button";
 import { Barbell, Bread, Trash } from "@phosphor-icons/react";
 import { motion } from "motion/react";
-
-function todayDate() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
+import { todayDate } from "@/lib/dates";
 
 const TOTAL = 50;
 

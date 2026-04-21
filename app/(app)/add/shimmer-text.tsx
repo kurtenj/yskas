@@ -10,6 +10,7 @@ const PHRASES = [
   "Estimating calories...",
   "Checking macros...",
   "Almost done...",
+  "Transcribing...",
 ];
 
 function ShimmeringText({

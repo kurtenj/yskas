@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@/lib/user-context";
@@ -8,7 +8,9 @@ import { useRouter } from "next/navigation";
 import { Button } from "@base-ui/react/button";
 import { Field } from "@base-ui/react/field";
 import { Input } from "@base-ui/react/input";
+import { ArrowRight, Microphone, Stop } from "@phosphor-icons/react";
 import { ShimmerText } from "./shimmer-text";
+import { todayDate, getLast7Days } from "@/lib/dates";
 import Fuse from "fuse.js";
 
 interface Estimate {
@@ -17,21 +19,6 @@ interface Estimate {
   protein?: number;
   carbs?: number;
   fat?: number;
-}
-
-function todayDate() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
-
-function getLast7Days(): string[] {
-  const dates: string[] = [];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    dates.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`);
-  }
-  return dates;
 }
 
 export default function AddMealPage() {
@@ -44,10 +31,16 @@ export default function AddMealPage() {
   const [estimate, setEstimate] = useState<Estimate | null>(null);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [recording, setRecording] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+
+  const last7Days = useMemo(() => getLast7Days(), []);
 
   const recentMeals = useQuery(
     api.meals.forDateRange,
-    userId ? { userId, dates: getLast7Days() } : "skip"
+    userId ? { userId, dates: last7Days } : "skip"
   );
 
   const uniqueMeals = useMemo(() => {
@@ -69,9 +62,17 @@ export default function AddMealPage() {
     return fuse.search(description.trim()).slice(0, 3).map((r) => r.item);
   }, [description, fuse, uniqueMeals]);
 
-  async function handleEstimate(e: React.FormEvent) {
-    e.preventDefault();
-    if (!description.trim()) return;
+  useEffect(() => {
+    return () => {
+      const recorder = mediaRecorderRef.current;
+      if (recorder && recorder.state !== "inactive") {
+        recorder.stream.getTracks().forEach((t) => t.stop());
+      }
+    };
+  }, []);
+
+  async function submitEstimate() {
+    if (!description.trim() || loading) return;
     setError("");
     setEstimate(null);
     setLoading(true);
@@ -89,6 +90,60 @@ export default function AddMealPage() {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
+    }
+  }
+
+  function handleEstimate(e: React.FormEvent) {
+    e.preventDefault();
+    submitEstimate();
+  }
+
+  async function handleMic() {
+    if (recording) {
+      mediaRecorderRef.current?.stop();
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
+      const mediaRecorder = new MediaRecorder(stream, { mimeType });
+      mediaRecorderRef.current = mediaRecorder;
+      const chunks: Blob[] = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        setRecording(false);
+        setTranscribing(true);
+
+        try {
+          const blob = new Blob(chunks, { type: mediaRecorder.mimeType || mimeType });
+          const form = new FormData();
+          form.append("audio", blob);
+
+          const res = await fetch("/api/transcribe", { method: "POST", body: form });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Transcription failed");
+          setDescription(data.transcript);
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "Transcription failed");
+        } finally {
+          setTranscribing(false);
+        }
+      };
+
+      mediaRecorder.start();
+      setRecording(true);
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "NotAllowedError") {
+        setError("Microphone access denied");
+      } else {
+        setError("Could not start recording");
+      }
     }
   }
 
@@ -117,6 +172,8 @@ export default function AddMealPage() {
     setError("");
   }
 
+  const busy = loading || transcribing;
+
   return (
     <div className="px-4 pt-6 max-w-lg mx-auto">
       <h1 className="text-xl font-bold text-mist-50 mb-1">Log a Meal</h1>
@@ -124,18 +181,60 @@ export default function AddMealPage() {
 
       {!estimate ? (
         <form onSubmit={handleEstimate} className="space-y-4">
-          <Field.Root>
+          <div className="relative bg-mist-900 border border-mist-800 rounded-2xl focus-within:border-mist-600 transition-colors">
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="e.g. two slices of whole wheat toast with peanut butter and a banana"
-              rows={4}
-              className="w-full bg-mist-900 text-mist-50 rounded-xl px-4 py-3 border border-mist-800 focus:outline-none focus:border-mist-400 resize-none placeholder:text-mist-600 text-sm leading-relaxed"
+              rows={3}
+              disabled={busy}
+              className="w-full bg-transparent text-mist-50 px-4 pt-4 pb-14 focus:outline-none resize-none placeholder:text-mist-600 text-sm leading-relaxed disabled:opacity-50"
               autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  submitEstimate();
+                }
+              }}
             />
-          </Field.Root>
 
-          {suggestions.length > 0 && (
+            <div className="absolute bottom-3 right-3 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleMic}
+                disabled={busy}
+                aria-label={recording ? "Stop recording" : "Start voice input"}
+                className={`w-9 h-9 flex items-center justify-center rounded-full transition-colors disabled:opacity-40 ${
+                  recording
+                    ? "bg-red-500 text-white"
+                    : "text-mist-400 hover:text-mist-200 hover:bg-mist-800"
+                }`}
+              >
+                {recording ? <Stop size={14} weight="fill" /> : <Microphone size={16} />}
+              </button>
+
+              <button
+                type="submit"
+                disabled={!description.trim() || busy}
+                aria-label="Estimate calories"
+                className="w-9 h-9 flex items-center justify-center rounded-full bg-mist-100 hover:bg-mist-200 disabled:bg-mist-800 disabled:text-mist-600 text-mist-950 transition-colors"
+              >
+                <ArrowRight size={16} weight="bold" />
+              </button>
+            </div>
+          </div>
+
+          {busy && (
+            <div className="flex items-center justify-center py-2">
+              <ShimmerText />
+            </div>
+          )}
+
+          {recording && (
+            <p className="text-center text-red-400 text-xs">Recording — tap the mic to stop</p>
+          )}
+
+          {suggestions.length > 0 && !busy && (
             <div className="space-y-1.5">
               <p className="text-mist-500 text-xs uppercase tracking-wide">Log again</p>
               {suggestions.map((meal) => (
@@ -165,30 +264,14 @@ export default function AddMealPage() {
               <p className="text-cyan-500 text-sm">{error}</p>
             </div>
           )}
-
-          {loading ? (
-            <div className="w-full flex items-center justify-center py-4">
-              <ShimmerText />
-            </div>
-          ) : (
-            <Button
-              type="submit"
-              disabled={!description.trim()}
-              className="w-full bg-mist-100 hover:bg-mist-200 disabled:bg-mist-800 disabled:text-mist-600 text-mist-950 font-semibold py-4 rounded-xl transition-colors"
-            >
-              Estimate calories
-            </Button>
-          )}
         </form>
       ) : (
         <div className="space-y-4">
-          {/* Meal description recap */}
           <div className="bg-mist-900 rounded-xl px-4 py-3">
             <p className="text-mist-500 text-xs uppercase tracking-wide mb-1">You described</p>
             <p className="text-mist-50 text-sm">{description}</p>
           </div>
 
-          {/* Estimate card */}
           <div className="bg-mist-900 border border-mist-800 rounded-xl p-5">
             <div className="flex items-start justify-between mb-4">
               <div>
@@ -229,7 +312,6 @@ export default function AddMealPage() {
             AI estimates may vary. Edit calories below if needed.
           </p>
 
-          {/* Calorie override */}
           <Field.Root>
             <Field.Label className="block text-mist-500 text-xs uppercase tracking-wide mb-1.5">
               Adjust calories (optional)

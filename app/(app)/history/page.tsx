@@ -5,27 +5,14 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@/lib/user-context";
 import { Progress } from "@base-ui/react/progress";
-
-function localDateString(d: Date): string {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
-
-function getLast7Days(): string[] {
-  const dates: string[] = [];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    dates.push(localDateString(d));
-  }
-  return dates;
-}
+import { formatDateKey, getLast7Days } from "@/lib/dates";
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr + "T12:00:00");
-  const today = localDateString(new Date());
+  const today = formatDateKey(new Date());
   const yesterdayDate = new Date();
   yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-  const yesterday = localDateString(yesterdayDate);
+  const yesterday = formatDateKey(yesterdayDate);
 
   if (dateStr === today) return "Today";
   if (dateStr === yesterday) return "Yesterday";
