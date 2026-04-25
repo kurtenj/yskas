@@ -40,26 +40,32 @@ export default function AddMealPage() {
 
   const recentMeals = useQuery(
     api.meals.forDateRange,
-    userId ? { userId, dates: last7Days } : "skip"
+    userId ? { userId, dates: last7Days } : "skip",
   );
 
   const uniqueMeals = useMemo(() => {
     if (!recentMeals) return [];
-    const seen = new Map<string, typeof recentMeals[0]>();
-    for (const meal of [...recentMeals].sort((a, b) => b.createdAt - a.createdAt)) {
+    const seen = new Map<string, (typeof recentMeals)[0]>();
+    for (const meal of [...recentMeals].sort(
+      (a, b) => b.createdAt - a.createdAt,
+    )) {
       if (!seen.has(meal.name)) seen.set(meal.name, meal);
     }
     return Array.from(seen.values());
   }, [recentMeals]);
 
   const fuse = useMemo(
-    () => new Fuse(uniqueMeals, { keys: ["name", "description"], threshold: 0.4 }),
-    [uniqueMeals]
+    () =>
+      new Fuse(uniqueMeals, { keys: ["name", "description"], threshold: 0.4 }),
+    [uniqueMeals],
   );
 
   const suggestions = useMemo(() => {
     if (description.trim().length < 2 || uniqueMeals.length === 0) return [];
-    return fuse.search(description.trim()).slice(0, 3).map((r) => r.item);
+    return fuse
+      .search(description.trim())
+      .slice(0, 3)
+      .map((r) => r.item);
   }, [description, fuse, uniqueMeals]);
 
   useEffect(() => {
@@ -106,7 +112,9 @@ export default function AddMealPage() {
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
+      const mimeType = MediaRecorder.isTypeSupported("audio/webm")
+        ? "audio/webm"
+        : "audio/mp4";
       const mediaRecorder = new MediaRecorder(stream, { mimeType });
       mediaRecorderRef.current = mediaRecorder;
       const chunks: Blob[] = [];
@@ -121,11 +129,16 @@ export default function AddMealPage() {
         setTranscribing(true);
 
         try {
-          const blob = new Blob(chunks, { type: mediaRecorder.mimeType || mimeType });
+          const blob = new Blob(chunks, {
+            type: mediaRecorder.mimeType || mimeType,
+          });
           const form = new FormData();
           form.append("audio", blob);
 
-          const res = await fetch("/api/transcribe", { method: "POST", body: form });
+          const res = await fetch("/api/transcribe", {
+            method: "POST",
+            body: form,
+          });
           const data = await res.json();
           if (!res.ok) throw new Error(data.error || "Transcription failed");
           setDescription(data.transcript);
@@ -177,7 +190,9 @@ export default function AddMealPage() {
   return (
     <div className="px-4 pt-6 max-w-lg mx-auto">
       <h1 className="text-xl font-bold text-mist-50 mb-1">Log a Meal</h1>
-      <p className="text-mist-400 text-sm mb-6">Describe what you ate in plain language</p>
+      <p className="text-mist-400 text-sm mb-6">
+        Describe what you ate in plain language
+      </p>
 
       {!estimate ? (
         <form onSubmit={handleEstimate} className="space-y-4">
@@ -204,22 +219,26 @@ export default function AddMealPage() {
                 onClick={handleMic}
                 disabled={busy}
                 aria-label={recording ? "Stop recording" : "Start voice input"}
-                className={`w-9 h-9 flex items-center justify-center rounded-full transition-colors disabled:opacity-40 ${
+                className={`w-11 h-11 flex items-center justify-center rounded-full transition-colors disabled:opacity-40 ${
                   recording
                     ? "bg-red-500 text-white"
                     : "text-mist-400 hover:text-mist-200 hover:bg-mist-800"
                 }`}
               >
-                {recording ? <Stop size={14} weight="fill" /> : <Microphone size={16} />}
+                {recording ? (
+                  <Stop size={20} weight="fill" />
+                ) : (
+                  <Microphone size={20} />
+                )}
               </button>
 
               <button
                 type="submit"
                 disabled={!description.trim() || busy}
                 aria-label="Estimate calories"
-                className="w-9 h-9 flex items-center justify-center rounded-full bg-mist-100 hover:bg-mist-200 disabled:bg-mist-800 disabled:text-mist-600 text-mist-950 transition-colors"
+                className="w-11 h-11 flex items-center justify-center rounded-full bg-mist-100 hover:bg-mist-200 disabled:bg-mist-800 disabled:text-mist-600 text-mist-950 transition-colors"
               >
-                <ArrowRight size={16} weight="bold" />
+                <ArrowRight size={20} weight="bold" />
               </button>
             </div>
           </div>
@@ -231,28 +250,35 @@ export default function AddMealPage() {
           )}
 
           {recording && (
-            <p className="text-center text-red-400 text-xs">Recording — tap the mic to stop</p>
+            <p className="text-center text-red-400 text-xs">
+              Recording — tap the mic to stop
+            </p>
           )}
 
           {suggestions.length > 0 && !busy && (
             <div className="space-y-1.5">
-              <p className="text-mist-500 text-xs uppercase tracking-wide">Log again</p>
               {suggestions.map((meal) => (
                 <button
                   key={meal._id}
                   type="button"
-                  onClick={() => setEstimate({
-                    name: meal.name,
-                    calories: meal.calories,
-                    protein: meal.protein,
-                    carbs: meal.carbs,
-                    fat: meal.fat,
-                  })}
-                  className="w-full text-left bg-mist-900 hover:bg-mist-800 border border-mist-800 rounded-xl px-4 py-3 transition-colors"
+                  onClick={() =>
+                    setEstimate({
+                      name: meal.name,
+                      calories: meal.calories,
+                      protein: meal.protein,
+                      carbs: meal.carbs,
+                      fat: meal.fat,
+                    })
+                  }
+                  className="w-full text-left bg-mist-900/50 hover:bg-mist-900 rounded-xl px-4 py-3 transition-colors"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-mist-100 text-sm font-medium truncate pr-3">{meal.name}</span>
-                    <span className="text-mist-400 text-sm shrink-0">{meal.calories} cal</span>
+                    <span className="text-mist-100 text-sm font-medium truncate pr-3">
+                      {meal.name}
+                    </span>
+                    <span className="text-mist-400 text-sm shrink-0">
+                      {meal.calories} cal
+                    </span>
                   </div>
                 </button>
               ))}
@@ -268,39 +294,55 @@ export default function AddMealPage() {
       ) : (
         <div className="space-y-4">
           <div className="bg-mist-900 rounded-xl px-4 py-3">
-            <p className="text-mist-500 text-xs uppercase tracking-wide mb-1">You described</p>
+            <p className="text-mist-500 text-xs uppercase tracking-wide mb-1">
+              You described
+            </p>
             <p className="text-mist-50 text-sm">{description}</p>
           </div>
 
           <div className="bg-mist-900 border border-mist-800 rounded-xl p-5">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <p className="text-mist-500 text-xs uppercase tracking-wide mb-1">Estimated meal</p>
-                <h2 className="text-mist-50 text-lg font-semibold">{estimate.name}</h2>
+                <p className="text-mist-500 text-xs uppercase tracking-wide mb-1">
+                  Estimated meal
+                </p>
+                <h2 className="text-mist-50 text-lg font-semibold">
+                  {estimate.name}
+                </h2>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-bold text-mist-50">{estimate.calories}</p>
+                <p className="text-3xl font-bold text-mist-50">
+                  {estimate.calories}
+                </p>
                 <p className="text-mist-500 text-xs">calories</p>
               </div>
             </div>
 
-            {(estimate.protein !== undefined || estimate.carbs !== undefined || estimate.fat !== undefined) && (
+            {(estimate.protein !== undefined ||
+              estimate.carbs !== undefined ||
+              estimate.fat !== undefined) && (
               <div className="grid grid-cols-3 gap-3 pt-4 border-t border-mist-800">
                 {estimate.protein !== undefined && (
                   <div className="text-center">
-                    <p className="text-mist-50 font-semibold">{estimate.protein}g</p>
+                    <p className="text-mist-50 font-semibold">
+                      {estimate.protein}g
+                    </p>
                     <p className="text-mist-500 text-xs">Protein</p>
                   </div>
                 )}
                 {estimate.carbs !== undefined && (
                   <div className="text-center">
-                    <p className="text-mist-50 font-semibold">{estimate.carbs}g</p>
+                    <p className="text-mist-50 font-semibold">
+                      {estimate.carbs}g
+                    </p>
                     <p className="text-mist-500 text-xs">Carbs</p>
                   </div>
                 )}
                 {estimate.fat !== undefined && (
                   <div className="text-center">
-                    <p className="text-mist-50 font-semibold">{estimate.fat}g</p>
+                    <p className="text-mist-50 font-semibold">
+                      {estimate.fat}g
+                    </p>
                     <p className="text-mist-500 text-xs">Fat</p>
                   </div>
                 )}
@@ -320,7 +362,10 @@ export default function AddMealPage() {
               type="number"
               value={estimate.calories}
               onChange={(e) =>
-                setEstimate({ ...estimate, calories: parseInt(e.target.value, 10) || 0 })
+                setEstimate({
+                  ...estimate,
+                  calories: parseInt(e.target.value, 10) || 0,
+                })
               }
               className="w-full bg-mist-900 text-mist-50 rounded-xl px-4 py-3 border border-mist-800 focus:outline-none focus:border-mist-400 text-center text-xl font-bold"
             />

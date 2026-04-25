@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useMemo, useRef } from "react";
-import { AnimatePresence, motion, useInView } from "motion/react";
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  UseInViewOptions,
+} from "motion/react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +25,9 @@ function ShimmeringText({
   repeat = true,
   repeatDelay = 0.5,
   className,
+  startOnView = true,
+  once = false,
+  inViewMargin,
   spread = 2,
   color,
   shimmerColor,
@@ -30,19 +38,23 @@ function ShimmeringText({
   repeat?: boolean;
   repeatDelay?: number;
   className?: string;
+  startOnView?: boolean;
+  once?: boolean;
+  inViewMargin?: UseInViewOptions["margin"];
   spread?: number;
   color?: string;
   shimmerColor?: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: false });
+  const isInView = useInView(ref, { once, margin: inViewMargin });
   const dynamicSpread = useMemo(() => text.length * spread, [text, spread]);
+  const shouldAnimate = !startOnView || isInView;
 
   return (
     <motion.span
       ref={ref}
       className={cn(
-        "relative inline-block `bg-size-[250%_100%,auto] bg-clip-text text-transparent",
+        "relative inline-block bg-size-[250%_100%,auto] bg-clip-text text-transparent",
         "[background-repeat:no-repeat,padding-box]",
         "[--shimmer-bg:linear-gradient(90deg,transparent_calc(50%-var(--spread)),var(--shimmer-color),transparent_calc(50%+var(--spread)))]",
         className,
@@ -50,13 +62,15 @@ function ShimmeringText({
       style={
         {
           "--spread": `${dynamicSpread}px`,
-          "--base-color": color ?? "#67787c",
-          "--shimmer-color": shimmerColor ?? "#f9fbfb",
+          ...(color && { "--base-color": color }),
+          ...(shimmerColor && { "--shimmer-color": shimmerColor }),
           backgroundImage: `var(--shimmer-bg), linear-gradient(var(--base-color), var(--base-color))`,
         } as React.CSSProperties
       }
       initial={{ backgroundPosition: "100% center", opacity: 0 }}
-      animate={isInView ? { backgroundPosition: "0% center", opacity: 1 } : {}}
+      animate={
+        shouldAnimate ? { backgroundPosition: "0% center", opacity: 1 } : {}
+      }
       transition={{
         backgroundPosition: {
           repeat: repeat ? Infinity : 0,
@@ -94,7 +108,12 @@ export function ShimmerText() {
         transition={{ duration: 0.25 }}
         className="inline-block"
       >
-        <ShimmeringText text={PHRASES[index]} />
+        <ShimmeringText
+          text={PHRASES[index]}
+          startOnView={false}
+          color="#67787c"
+          shimmerColor="#f9fbfb"
+        />
       </motion.span>
     </AnimatePresence>
   );

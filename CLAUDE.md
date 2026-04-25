@@ -56,6 +56,14 @@ Interactive elements use [Base UI](https://base-ui.com) (`@base-ui/react`). Use 
 
 `lib/utils.ts` exports `cn()` (clsx + tailwind-merge) for className composition.
 
+### Voice Transcription
+
+`/api/transcribe` (Next.js Route Handler) accepts a `multipart/form-data` POST with an `audio` field and calls the ElevenLabs `scribe_v1` speech-to-text model. Returns `{ transcript: string }`. Requires `ELEVENLABS_API_KEY` env var. The browser records with `MediaRecorder`, preferring `audio/webm` and falling back to `audio/mp4` for Safari.
+
 ### Animation
 
-`motion/react` (the `motion` package) is installed. The add page uses a `ShimmeringText` component (`app/(app)/add/shimmer-text.tsx`) for AI loading state — it's a port of the ElevenLabs UI shimmer pattern using `motion` `backgroundPosition` animation with CSS custom properties for color and spread.
+`motion/react` (the `motion` package) is installed. The add page uses a `ShimmerText` component (`app/(app)/add/shimmer-text.tsx`) for AI/transcription loading state. The inner `ShimmeringText` is sourced from the official ElevenLabs UI registry (`https://ui.elevenlabs.io/r/shimmering-text.json`) and uses `motion` `backgroundPosition` animation with CSS custom properties.
+
+When using `ShimmeringText` inside a conditionally rendered subtree, always pass `startOnView={false}` — otherwise `useInView` returns `false` on mount and the animation never starts. The `ShimmerText` wrapper already does this.
+
+The ElevenLabs UI CLI (`@elevenlabs/cli`) does not work on Windows (open issue #65 — it calls `which npx` internally). Workaround: use WSL or Git Bash, or copy the component JSON directly from `https://ui.elevenlabs.io/r/<component-name>.json`.
