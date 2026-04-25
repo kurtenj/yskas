@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@base-ui/react/button";
 import { Field } from "@base-ui/react/field";
 import { Input } from "@base-ui/react/input";
+import { Heart } from "@phosphor-icons/react";
 
 export default function SettingsPage() {
   const { userId, clearUser } = useUser();
@@ -129,6 +130,11 @@ export default function SettingsPage() {
           Switch profile
         </Button>
       </div>
+
+      <footer className="mt-8 mb-4 text-center text-mist-600 text-xs leading-relaxed">
+        <p className="flex items-center justify-center gap-1">Grown in the Midwest <Heart weight="fill" className="text-rose-500" size={12} /></p>
+        <p>Yskas v{process.env.NEXT_PUBLIC_APP_VERSION}</p>
+      </footer>
     </div>
   );
 }
