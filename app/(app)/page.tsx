@@ -5,7 +5,6 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@/lib/user-context";
 import { Id } from "@/convex/_generated/dataModel";
-import Link from "next/link";
 import { Button } from "@base-ui/react/button";
 import { Barbell, Bread, Trash } from "@phosphor-icons/react";
 import { motion } from "motion/react";
@@ -173,16 +172,10 @@ export default function TodayPage() {
       {meals.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-mist-400 text-sm">No meals logged yet today.</p>
-          <Link
-            href="/add"
-            className="inline-block mt-4 bg-mist-900 text-white text-sm font-semibold px-6 py-3 rounded-xl transition-colors"
-          >
-            Log your first meal
-          </Link>
         </div>
       ) : (
         <div
-          className="px-6 overflow-y-auto flex-1 pb-20"
+          className="px-6 overflow-y-auto flex-1 pb-40"
           onScroll={(e) => setScrolled(e.currentTarget.scrollTop > 0)}
           style={scrolled ? {
             maskImage: "linear-gradient(to bottom, transparent, black 2rem)",

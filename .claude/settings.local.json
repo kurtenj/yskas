@@ -34,7 +34,8 @@
       "Bash(where pnpm *)",
       "Read(//c/Users/Jonathan/AppData/Roaming/npm/**)",
       "Bash(where yarn *)",
-      "Bash(where bun *)"
+      "Bash(where bun *)",
+      "Bash(Remove-Item -Recurse -Force \"C:\\\\Users\\\\Jonathan\\\\Workspace\\\\yskas\\\\app\\\\\\(app\\)\\\\add\")"
     ]
   }
 }

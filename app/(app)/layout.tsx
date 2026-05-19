@@ -6,11 +6,11 @@ import { api } from "@/convex/_generated/api";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 import Link from "next/link";
-import { PlusCircle, ListNumbers, UserSwitch } from "@phosphor-icons/react";
+import { ListNumbers, UserSwitch } from "@phosphor-icons/react";
 import { motion } from "motion/react";
+import { MealInput } from "./meal-input";
 
 const tabs = [
-  { href: "/add", label: "Add", icon: PlusCircle },
   { href: "/history", label: "History", icon: ListNumbers },
   { href: "/settings", label: "Settings", icon: UserSwitch },
 ] as const;
@@ -103,7 +103,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <main className="min-h-screen pb-20">{children}</main>
+      <main className="min-h-screen pb-40">{children}</main>
+      <MealInput />
       <NavBar />
     </>
   );
