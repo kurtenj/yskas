@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useRef } from "react";
+import React, { useRef } from "react";
 import {
   AnimatePresence,
   m,
@@ -47,7 +47,7 @@ function ShimmeringText({
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once, margin: inViewMargin });
-  const dynamicSpread = useMemo(() => text.length * spread, [text, spread]);
+  const dynamicSpread = text.length * spread;
   const shouldAnimate = !startOnView || isInView;
 
   return (

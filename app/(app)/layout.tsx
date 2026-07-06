@@ -3,8 +3,7 @@
 import { useUser } from "@/lib/user-context";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useRouter, usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { redirect, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ListNumbers, UserSwitch } from "@phosphor-icons/react";
 import { LazyMotion, domMax, m } from "motion/react";
@@ -85,20 +84,18 @@ function NavBar() {
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { userId } = useUser();
-  const router = useRouter();
   const users = useQuery(api.users.list);
 
-  useEffect(() => {
-    if (users === undefined) return;
-    if (users.length === 0 || !userId) router.replace("/select");
-  }, [users, userId, router]);
-
-  if (!userId || users === undefined) {
+  if (users === undefined) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-mist-800 border-t-mist-100 rounded-full animate-spin" />
       </div>
     );
+  }
+
+  if (users.length === 0 || !userId) {
+    redirect("/select");
   }
 
   return (

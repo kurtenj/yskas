@@ -42,7 +42,7 @@ Meals older than 7 days are purged nightly by a Convex cron job (`convex/crons.t
 
 ### Meal Suggestions (Re-log)
 
-The add page (`app/(app)/add/page.tsx`) loads the last 7 days of meals and deduplicates them by `name` (most recent entry wins). A Fuse.js index is built from this unique set and searched on each keystroke after 2 characters. Matching meals appear as "Log again" cards that set `estimate` state directly, bypassing the `/api/estimate` AI call entirely. The Fuse index is memoized separately from the search so it only rebuilds when meal data changes, not on every keystroke.
+`MealInput` (`app/(app)/meal-input.tsx`) loads the last 7 days of meals via the `useMealSuggestions` hook and deduplicates them by `name` (most recent entry wins). A Fuse.js index is built from this unique set and searched on each keystroke after 2 characters. Matching meals appear as "Log again" cards that set `estimate` state directly, bypassing the `/api/estimate` AI call entirely. React Compiler (enabled via `reactCompiler: true` in `next.config.ts`) handles memoizing the dedup/index/search work automatically — no manual `useMemo` needed.
 
 ### Styling
 

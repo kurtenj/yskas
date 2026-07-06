@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useUser } from "@/lib/user-context";
 import { ArrowUp, Barbell, Bread, Check, Microphone, Stop } from "@phosphor-icons/react";
 import { ShimmerText } from "./shimmer-text";
@@ -19,6 +20,239 @@ interface Estimate {
   fat?: number;
 }
 
+type Result<T> = { ok: true; data: T } | { ok: false; error: string };
+
+async function fetchEstimate(description: string): Promise<Result<Estimate>> {
+  try {
+    const res = await fetch("/api/estimate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ description }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to estimate");
+    return { ok: true, data };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : "Something went wrong" };
+  }
+}
+
+async function transcribeAudio(blob: Blob): Promise<Result<string>> {
+  try {
+    const form = new FormData();
+    form.append("audio", blob);
+    const res = await fetch("/api/transcribe", { method: "POST", body: form });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Transcription failed");
+    return { ok: true, data: data.transcript };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : "Transcription failed" };
+  }
+}
+
+function useMealSuggestions({
+  userId,
+  description,
+  hasEstimate,
+}: {
+  userId: Id<"users"> | null;
+  description: string;
+  hasEstimate: boolean;
+}) {
+  const last7Days = getLast7Days();
+
+  const recentMeals = useQuery(
+    api.meals.forDateRange,
+    userId ? { userId, dates: last7Days } : "skip",
+  );
+
+  const uniqueMeals = (() => {
+    if (!recentMeals) return [];
+    const seen = new Map<string, Doc<"meals">>();
+    for (const meal of [...recentMeals].sort((a, b) => b.createdAt - a.createdAt)) {
+      if (!seen.has(meal.name)) seen.set(meal.name, meal);
+    }
+    return Array.from(seen.values());
+  })();
+
+  const fuse = new Fuse(uniqueMeals, { keys: ["name", "description"], threshold: 0.4 });
+
+  if (hasEstimate || description.trim().length < 2 || uniqueMeals.length === 0) return [];
+  return fuse.search(description.trim()).slice(0, 3).map((r) => r.item);
+}
+
+function useVoiceRecording({
+  onTranscript,
+  onError,
+}: {
+  onTranscript: (text: string) => void;
+  onError: (message: string) => void;
+}) {
+  const [recording, setRecording] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+
+  useEffect(() => {
+    return () => {
+      const recorder = mediaRecorderRef.current;
+      if (recorder && recorder.state !== "inactive") {
+        recorder.stream.getTracks().forEach((t) => t.stop());
+      }
+    };
+  }, []);
+
+  async function handleMic() {
+    if (recording) {
+      mediaRecorderRef.current?.stop();
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
+      const mediaRecorder = new MediaRecorder(stream, { mimeType });
+      mediaRecorderRef.current = mediaRecorder;
+      const chunks: Blob[] = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        setRecording(false);
+        setTranscribing(true);
+        const blob = new Blob(chunks, { type: mediaRecorder.mimeType || mimeType });
+        const result = await transcribeAudio(blob);
+        if (result.ok) {
+          onTranscript(result.data);
+        } else {
+          onError(result.error);
+        }
+        setTranscribing(false);
+      };
+
+      mediaRecorder.start();
+      setRecording(true);
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "NotAllowedError") {
+        onError("Microphone access denied");
+      } else {
+        onError("Could not start recording");
+      }
+    }
+  }
+
+  return { recording, transcribing, handleMic };
+}
+
+function MealStatusPanel({
+  busy,
+  recording,
+  estimate,
+  setEstimate,
+  error,
+  suggestions,
+}: {
+  busy: boolean;
+  recording: boolean;
+  estimate: Estimate | null;
+  setEstimate: (estimate: Estimate) => void;
+  error: string;
+  suggestions: Doc<"meals">[];
+}) {
+  if (busy) {
+    return (
+      <div className="flex items-center justify-center px-4 py-6">
+        <ShimmerText />
+      </div>
+    );
+  }
+
+  if (recording) {
+    return (
+      <div className="flex items-center justify-center px-4 py-6">
+        <p className="text-red-400 text-sm">Recording — tap mic to stop</p>
+      </div>
+    );
+  }
+
+  if (estimate) {
+    return (
+      <div className="flex items-center gap-4 px-4 py-5">
+        <div className="min-w-0 flex-1">
+          <p className="text-mist-100 text-base truncate">{estimate.name}</p>
+          {(estimate.protein !== undefined || estimate.carbs !== undefined) && (
+            <div className="flex items-center gap-3 mt-1">
+              {estimate.protein !== undefined && (
+                <span className="flex items-center gap-1 text-mist-500 text-base">
+                  <Barbell size={20} weight="fill" />
+                  {estimate.protein}g
+                </span>
+              )}
+              {estimate.carbs !== undefined && (
+                <span className="flex items-center gap-1 text-mist-500 text-base">
+                  <Bread size={20} weight="fill" />
+                  {estimate.carbs}g
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+        <div className="shrink-0 rounded-xl border border-mist-800 bg-mist-950 px-4 py-2.5">
+          <input
+            type="number"
+            value={estimate.calories}
+            onChange={(e) =>
+              setEstimate({ ...estimate, calories: parseInt(e.target.value, 10) || 0 })
+            }
+            className="w-16 bg-transparent text-mist-200 text-2xl font-bold font-agdasima focus:outline-none text-center"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="px-4 py-5">
+        <p className="text-cyan-500 text-sm">{error}</p>
+      </div>
+    );
+  }
+
+  if (suggestions.length > 0) {
+    return (
+      <div className="px-4 py-2">
+        {suggestions.map((meal, i) => (
+          <button
+            key={meal._id}
+            type="button"
+            onClick={() =>
+              setEstimate({
+                name: meal.name,
+                calories: meal.calories,
+                protein: meal.protein,
+                carbs: meal.carbs,
+                fat: meal.fat,
+              })
+            }
+            className={`w-full flex items-center justify-between py-4 text-left ${
+              i < suggestions.length - 1 ? "border-b border-mist-800/50" : ""
+            }`}
+          >
+            <span className="text-mist-100 text-sm font-medium truncate pr-3">
+              {meal.name}
+            </span>
+            <span className="text-mist-400 text-sm shrink-0">{meal.calories} cal</span>
+          </button>
+        ))}
+      </div>
+    );
+  }
+
+  return null;
+}
+
 export function MealInput() {
   const pathname = usePathname();
   const isHome = pathname === "/";
@@ -31,45 +265,13 @@ export function MealInput() {
   const [estimate, setEstimate] = useState<Estimate | null>(null);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
-  const [recording, setRecording] = useState(false);
-  const [transcribing, setTranscribing] = useState(false);
 
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const { recording, transcribing, handleMic } = useVoiceRecording({
+    onTranscript: (text) => setDescription(text),
+    onError: (message) => setError(message),
+  });
 
-  const last7Days = useMemo(() => getLast7Days(), []);
-
-  const recentMeals = useQuery(
-    api.meals.forDateRange,
-    userId ? { userId, dates: last7Days } : "skip",
-  );
-
-  const uniqueMeals = useMemo(() => {
-    if (!recentMeals) return [];
-    const seen = new Map<string, (typeof recentMeals)[0]>();
-    for (const meal of [...recentMeals].sort((a, b) => b.createdAt - a.createdAt)) {
-      if (!seen.has(meal.name)) seen.set(meal.name, meal);
-    }
-    return Array.from(seen.values());
-  }, [recentMeals]);
-
-  const fuse = useMemo(
-    () => new Fuse(uniqueMeals, { keys: ["name", "description"], threshold: 0.4 }),
-    [uniqueMeals],
-  );
-
-  const suggestions = useMemo(() => {
-    if (estimate || description.trim().length < 2 || uniqueMeals.length === 0) return [];
-    return fuse.search(description.trim()).slice(0, 3).map((r) => r.item);
-  }, [description, fuse, uniqueMeals, estimate]);
-
-  useEffect(() => {
-    return () => {
-      const recorder = mediaRecorderRef.current;
-      if (recorder && recorder.state !== "inactive") {
-        recorder.stream.getTracks().forEach((t) => t.stop());
-      }
-    };
-  }, []);
+  const suggestions = useMealSuggestions({ userId, description, hasEstimate: !!estimate });
 
   const busy = loading || transcribing;
   const showPanel = busy || recording || !!estimate || suggestions.length > 0 || !!error;
@@ -100,52 +302,6 @@ export function MealInput() {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
-    }
-  }
-
-  async function handleMic() {
-    if (recording) {
-      mediaRecorderRef.current?.stop();
-      return;
-    }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
-      const mediaRecorder = new MediaRecorder(stream, { mimeType });
-      mediaRecorderRef.current = mediaRecorder;
-      const chunks: Blob[] = [];
-
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunks.push(e.data);
-      };
-
-      mediaRecorder.onstop = async () => {
-        stream.getTracks().forEach((t) => t.stop());
-        setRecording(false);
-        setTranscribing(true);
-        try {
-          const blob = new Blob(chunks, { type: mediaRecorder.mimeType || mimeType });
-          const form = new FormData();
-          form.append("audio", blob);
-          const res = await fetch("/api/transcribe", { method: "POST", body: form });
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "Transcription failed");
-          setDescription(data.transcript);
-        } catch (err) {
-          setError(err instanceof Error ? err.message : "Transcription failed");
-        } finally {
-          setTranscribing(false);
-        }
-      };
-
-      mediaRecorder.start();
-      setRecording(true);
-    } catch (err) {
-      if (err instanceof DOMException && err.name === "NotAllowedError") {
-        setError("Microphone access denied");
-      } else {
-        setError("Could not start recording");
-      }
     }
   }
 
@@ -191,87 +347,14 @@ export function MealInput() {
                 transition={{ type: "spring", stiffness: 400, damping: 32 }}
                 className="overflow-hidden bg-mist-900/50 border-b border-mist-800"
               >
-                {busy && (
-                  <div className="flex items-center justify-center px-4 py-6">
-                    <ShimmerText />
-                  </div>
-                )}
-
-                {!busy && recording && (
-                  <div className="flex items-center justify-center px-4 py-6">
-                    <p className="text-red-400 text-sm">Recording — tap mic to stop</p>
-                  </div>
-                )}
-
-                {!busy && !recording && estimate && (
-                  <div className="flex items-center gap-4 px-4 py-5">
-                    <div className="min-w-0 flex-1">
-                      <p className="text-mist-100 text-base truncate">{estimate.name}</p>
-                      {(estimate.protein !== undefined || estimate.carbs !== undefined) && (
-                        <div className="flex items-center gap-3 mt-1">
-                          {estimate.protein !== undefined && (
-                            <span className="flex items-center gap-1 text-mist-500 text-base">
-                              <Barbell size={20} weight="fill" />
-                              {estimate.protein}g
-                            </span>
-                          )}
-                          {estimate.carbs !== undefined && (
-                            <span className="flex items-center gap-1 text-mist-500 text-base">
-                              <Bread size={20} weight="fill" />
-                              {estimate.carbs}g
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    <div className="shrink-0 rounded-xl border border-mist-800 bg-mist-950 px-4 py-2.5">
-                      <input
-                        type="number"
-                        value={estimate.calories}
-                        onChange={(e) =>
-                          setEstimate({ ...estimate, calories: parseInt(e.target.value, 10) || 0 })
-                        }
-                        className="w-16 bg-transparent text-mist-200 text-2xl font-bold font-agdasima focus:outline-none text-center"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {!busy && !recording && !estimate && error && (
-                  <div className="px-4 py-5">
-                    <p className="text-cyan-500 text-sm">{error}</p>
-                  </div>
-                )}
-
-                {!busy && !recording && !estimate && !error && suggestions.length > 0 && (
-                  <div className="px-4 py-2">
-                    {suggestions.map((meal, i) => (
-                      <button
-                        key={meal._id}
-                        type="button"
-                        onClick={() =>
-                          setEstimate({
-                            name: meal.name,
-                            calories: meal.calories,
-                            protein: meal.protein,
-                            carbs: meal.carbs,
-                            fat: meal.fat,
-                          })
-                        }
-                        className={`w-full flex items-center justify-between py-4 text-left ${
-                          i < suggestions.length - 1 ? "border-b border-mist-800/50" : ""
-                        }`}
-                      >
-                        <span className="text-mist-100 text-sm font-medium truncate pr-3">
-                          {meal.name}
-                        </span>
-                        <span className="text-mist-400 text-sm shrink-0">
-                          {meal.calories} cal
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                )}
+                <MealStatusPanel
+                  busy={busy}
+                  recording={recording}
+                  estimate={estimate}
+                  setEstimate={setEstimate}
+                  error={error}
+                  suggestions={suggestions}
+                />
               </m.div>
             )}
           </AnimatePresence>
