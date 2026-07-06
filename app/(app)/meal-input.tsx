@@ -289,42 +289,34 @@ export function MealInput() {
     if (!description.trim() || busy) return;
     setError("");
     setLoading(true);
-    try {
-      const res = await fetch("/api/estimate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description: description.trim() }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to estimate");
-      setEstimate(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setLoading(false);
+    const result = await fetchEstimate(description.trim());
+    if (result.ok) {
+      setEstimate(result.data);
+    } else {
+      setError(result.error);
     }
+    setLoading(false);
   }
 
-  async function handleSave() {
+  function handleSave() {
     if (!estimate || !userId) return;
     setSaving(true);
-    try {
-      await addMeal({
-        userId,
-        description: description.trim(),
-        name: estimate.name,
-        calories: estimate.calories,
-        protein: estimate.protein,
-        carbs: estimate.carbs,
-        fat: estimate.fat,
-        date: todayDate(),
-      });
-      setDescription("");
-      setEstimate(null);
-      setError("");
-    } finally {
-      setSaving(false);
-    }
+    return addMeal({
+      userId,
+      description: description.trim(),
+      name: estimate.name,
+      calories: estimate.calories,
+      protein: estimate.protein,
+      carbs: estimate.carbs,
+      fat: estimate.fat,
+      date: todayDate(),
+    })
+      .then(() => {
+        setDescription("");
+        setEstimate(null);
+        setError("");
+      })
+      .finally(() => setSaving(false));
   }
 
   const submitDisabled = !description.trim() || busy || saving;

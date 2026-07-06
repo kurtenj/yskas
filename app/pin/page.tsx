@@ -12,28 +12,25 @@ export default function PinPage() {
   const router = useRouter();
   const id = useId();
 
-  async function handleComplete(pin: string) {
+  function handleComplete(pin: string) {
     setError("");
     setLoading(true);
 
-    try {
-      const res = await fetch("/api/verify-pin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pin }),
-      });
-
-      if (res.ok) {
-        router.push("/");
-        router.refresh();
-      } else {
-        setError("Incorrect PIN. Try again.");
-      }
-    } catch {
-      setError("Something went wrong. Try again.");
-    } finally {
-      setLoading(false);
-    }
+    fetch("/api/verify-pin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pin }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          router.push("/");
+          router.refresh();
+        } else {
+          setError("Incorrect PIN. Try again.");
+        }
+      })
+      .catch(() => setError("Something went wrong. Try again."))
+      .finally(() => setLoading(false));
   }
 
   return (

@@ -6,7 +6,7 @@ import { api } from "@/convex/_generated/api";
 import { redirect, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ListNumbers, UserSwitch } from "@phosphor-icons/react";
-import { LazyMotion, domMax, m } from "motion/react";
+import { LazyMotion, MotionConfig, domMax, m } from "motion/react";
 import { MealInput } from "./meal-input";
 
 const tabs = [
@@ -99,10 +99,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <LazyMotion features={domMax}>
-      <main className="min-h-screen pb-40">{children}</main>
-      <MealInput />
-      <NavBar />
-    </LazyMotion>
+    <MotionConfig reducedMotion="user">
+      <LazyMotion features={domMax}>
+        <main className="min-h-screen pb-40">{children}</main>
+        <MealInput />
+        <NavBar />
+      </LazyMotion>
+    </MotionConfig>
   );
 }

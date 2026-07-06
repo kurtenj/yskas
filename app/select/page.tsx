@@ -27,20 +27,19 @@ export default function SelectPage() {
     router.push("/");
   }
 
-  async function handleCreate(e: React.FormEvent) {
+  function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim() || !goal) return;
     setCreating(true);
-    try {
-      const id = await createUser({
-        name: name.trim(),
-        dailyCalorieGoal: parseInt(goal, 10),
-      });
-      setUserId(id);
-      router.push("/");
-    } finally {
-      setCreating(false);
-    }
+    createUser({
+      name: name.trim(),
+      dailyCalorieGoal: parseInt(goal, 10),
+    })
+      .then((id) => {
+        setUserId(id);
+        router.push("/");
+      })
+      .finally(() => setCreating(false));
   }
 
   if (users === undefined) {
