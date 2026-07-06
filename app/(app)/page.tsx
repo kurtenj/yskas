@@ -7,6 +7,7 @@ import { useUser } from "@/lib/user-context";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@base-ui/react/button";
 import { Barbell, Bread, Trash } from "@phosphor-icons/react";
+import Link from "next/link";
 import { m } from "motion/react";
 import { todayDate } from "@/lib/dates";
 
@@ -166,7 +167,9 @@ export default function TodayPage() {
       <div className="px-6 pt-6 shrink-0">
         <div className="flex items-center justify-between mb-4 text-mist-200">
           <p>{dateLabel}</p>
-          <p>{user.name}</p>
+          <Link href="/settings" className="hover:text-mist-50 transition-colors">
+            {user.name}
+          </Link>
         </div>
         <CalorieDotGrid consumed={consumed} goal={goal} proteinG={proteinG} />
       </div>
@@ -177,7 +180,7 @@ export default function TodayPage() {
         </div>
       ) : (
         <div
-          className="px-6 overflow-y-auto flex-1 pb-40"
+          className="px-6 overflow-y-auto flex-1 pb-28"
           onScroll={(e) => setScrolled(e.currentTarget.scrollTop > 0)}
           style={scrolled ? {
             maskImage: "linear-gradient(to bottom, transparent, black 2rem)",

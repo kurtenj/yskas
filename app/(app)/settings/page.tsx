@@ -5,10 +5,11 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@/lib/user-context";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@base-ui/react/button";
 import { Field } from "@base-ui/react/field";
 import { Input } from "@base-ui/react/input";
-import { Heart } from "@phosphor-icons/react";
+import { ArrowLeft, Heart } from "@phosphor-icons/react";
 
 export default function SettingsPage() {
   const { userId, clearUser } = useUser();
@@ -57,7 +58,16 @@ export default function SettingsPage() {
 
   return (
     <div className="px-4 pt-6 max-w-lg mx-auto">
-      <h1 className="text-xl font-bold text-mist-50 mb-1">Settings</h1>
+      <div className="flex items-center gap-3 mb-1">
+        <Link
+          href="/"
+          aria-label="Back to home"
+          className="text-mist-400 hover:text-mist-100 transition-colors"
+        >
+          <ArrowLeft size={20} weight="bold" />
+        </Link>
+        <h1 className="text-xl font-bold text-mist-50">Settings</h1>
+      </div>
       <p className="text-mist-400 text-sm mb-6">Manage your profile</p>
 
       {/* Profile info */}

@@ -266,6 +266,7 @@ export function MealInput() {
   const [estimate, setEstimate] = useState<Estimate | null>(null);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   const { recording, transcribing, handleMic } = useVoiceRecording({
     onTranscript: (text) => setDescription(text),
@@ -322,93 +323,116 @@ export function MealInput() {
 
   const submitDisabled = !description.trim() || busy || saving;
 
-  return (
-    <m.div
-      className="fixed bottom-24 left-4 right-4 z-40"
-      animate={{ x: isHome ? 0 : "calc(100% + 1rem)" }}
-      transition={{ type: "spring", stiffness: 350, damping: 32 }}
-    >
-      <form onSubmit={handleSubmit}>
-        <div className="rounded-2xl border border-mist-800 overflow-hidden shadow-lg">
-          <AnimatePresence>
-            {showPanel && (
-              <m.div
-                key="panel"
-                initial={{ height: 0 }}
-                animate={{ height: "auto" }}
-                exit={{ height: 0 }}
-                transition={{ type: "spring", stiffness: 400, damping: 32 }}
-                className="overflow-hidden bg-mist-900/50 border-b border-mist-800"
-              >
-                <MealStatusPanel
-                  busy={busy}
-                  recording={recording}
-                  estimate={estimate}
-                  setEstimate={setEstimate}
-                  error={error}
-                  suggestions={suggestions}
-                />
-              </m.div>
-            )}
-          </AnimatePresence>
+  function handleBlurCapture(e: React.FocusEvent<HTMLDivElement>) {
+    if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+      setFocused(false);
+    }
+  }
 
-          <div className="flex items-center pl-4 pr-2 py-2 bg-mist-900">
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => {
-                const val = e.target.value;
-                setDescription(val);
-                if (estimate) setEstimate(null);
-                if (error) setError("");
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  if (!submitDisabled) handleSubmit(e as unknown as React.FormEvent);
-                }
-              }}
-              placeholder="What did you eat?"
-              aria-label="What did you eat?"
-              disabled={busy || saving}
-              className="flex-1 min-w-0 bg-transparent text-mist-50 text-base focus:outline-none placeholder:text-mist-600 disabled:opacity-50 py-1.5"
-            />
-            <div className="flex items-center gap-2 shrink-0 ml-2">
-              <button
-                type="button"
-                onClick={handleMic}
+  return (
+    <>
+      <AnimatePresence>
+        {focused && isHome && (
+          <m.div
+            key="input-overlay"
+            className="fixed inset-0 z-30 bg-mist-950/70 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => (document.activeElement as HTMLElement | null)?.blur()}
+          />
+        )}
+      </AnimatePresence>
+      <m.div
+        className="fixed bottom-6 left-4 right-4 z-40"
+        animate={{ x: isHome ? 0 : "calc(100% + 1rem)" }}
+        transition={{ type: "spring", stiffness: 350, damping: 32 }}
+        onFocusCapture={() => setFocused(true)}
+        onBlurCapture={handleBlurCapture}
+      >
+        <form onSubmit={handleSubmit}>
+          <div className="rounded-2xl border border-mist-800 overflow-hidden shadow-lg">
+            <AnimatePresence>
+              {showPanel && (
+                <m.div
+                  key="panel"
+                  initial={{ height: 0 }}
+                  animate={{ height: "auto" }}
+                  exit={{ height: 0 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                  className="overflow-hidden bg-mist-900/50 border-b border-mist-800"
+                >
+                  <MealStatusPanel
+                    busy={busy}
+                    recording={recording}
+                    estimate={estimate}
+                    setEstimate={setEstimate}
+                    error={error}
+                    suggestions={suggestions}
+                  />
+                </m.div>
+              )}
+            </AnimatePresence>
+
+            <div className="flex items-center pl-4 pr-2 py-2 bg-mist-900">
+              <input
+                type="text"
+                value={description}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setDescription(val);
+                  if (estimate) setEstimate(null);
+                  if (error) setError("");
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (!submitDisabled) handleSubmit(e as unknown as React.FormEvent);
+                  }
+                }}
+                placeholder="What did you eat?"
+                aria-label="What did you eat?"
                 disabled={busy || saving}
-                aria-label={recording ? "Stop recording" : "Start voice input"}
-                className={`w-11 h-11 flex items-center justify-center rounded-full transition-colors disabled:opacity-40 ${
-                  recording
-                    ? "bg-red-500 text-white"
-                    : "text-mist-400 hover:text-mist-200"
-                }`}
-              >
-                {recording ? <Stop size={24} weight="fill" /> : <Microphone size={24} />}
-              </button>
-              <button
-                type="submit"
-                disabled={submitDisabled}
-                aria-label={estimate ? "Save meal" : "Estimate calories"}
-                className={`w-11 h-11 flex items-center justify-center rounded-full transition-colors ${
-                  submitDisabled
-                    ? "bg-mist-800 text-mist-600"
-                    : estimate
-                    ? "bg-[oklch(71.5%_0.143_215.2)] text-mist-950 hover:opacity-90"
-                    : "bg-mist-100 text-mist-950 hover:bg-mist-200"
-                }`}
-              >
-                {estimate ? (
-                  <Check size={24} weight="bold" />
-                ) : (
-                  <ArrowUp size={24} weight="bold" />
-                )}
-              </button>
+                className="flex-1 min-w-0 bg-transparent text-mist-50 text-base focus:outline-none placeholder:text-mist-600 disabled:opacity-50 py-1.5"
+              />
+              <div className="flex items-center gap-2 shrink-0 ml-2">
+                <button
+                  type="button"
+                  onClick={handleMic}
+                  disabled={busy || saving}
+                  aria-label={recording ? "Stop recording" : "Start voice input"}
+                  className={`w-11 h-11 flex items-center justify-center rounded-full transition-colors disabled:opacity-40 ${
+                    recording
+                      ? "bg-red-500 text-white"
+                      : "text-mist-400 hover:text-mist-200"
+                  }`}
+                >
+                  {recording ? <Stop size={24} weight="fill" /> : <Microphone size={24} />}
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitDisabled}
+                  aria-label={estimate ? "Save meal" : "Estimate calories"}
+                  className={`w-11 h-11 flex items-center justify-center rounded-full transition-colors ${
+                    submitDisabled
+                      ? "bg-mist-800 text-mist-600"
+                      : estimate
+                      ? "bg-[oklch(71.5%_0.143_215.2)] text-mist-950 hover:opacity-90"
+                      : "bg-mist-100 text-mist-950 hover:bg-mist-200"
+                  }`}
+                >
+                  {estimate ? (
+                    <Check size={24} weight="bold" />
+                  ) : (
+                    <ArrowUp size={24} weight="bold" />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
-    </m.div>
+        </form>
+      </m.div>
+    </>
   );
 }
