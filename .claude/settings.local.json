@@ -43,7 +43,12 @@
       "Bash(curl -s -H \"Cache-Control: no-cache\" -H \"Pragma: no-cache\" \"https://www.react.doctor/prompts/rules/react-doctor/use-lazy-motion.md\")",
       "Bash(curl -s -H \"Cache-Control: no-cache\" -H \"Pragma: no-cache\" \"https://www.react.doctor/prompts/rules/react-doctor/rendering-svg-precision.md\")",
       "Bash(curl -s -H \"Cache-Control: no-cache\" -H \"Pragma: no-cache\" \"https://www.react.doctor/prompts/rules/react-doctor/nextjs-no-client-side-redirect.md\")",
-      "Bash(curl -s -H \"Cache-Control: no-cache\" -H \"Pragma: no-cache\" \"https://motion.dev/docs/react-reduce-bundle-size\")"
+      "Bash(curl -s -H \"Cache-Control: no-cache\" -H \"Pragma: no-cache\" \"https://motion.dev/docs/react-reduce-bundle-size\")",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='node.exe'\")",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='node.exe'\" | Where-Object { $_.CommandLine -match 'yskas' } | Select-Object ProcessId, CommandLine | Format-List)",
+      "PowerShell(Stop-Process -Id 9236,2464,1032,18244,24496,24008 -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1; Get-CimInstance Win32_Process -Filter \"Name='node.exe'\" | Where-Object { $_.CommandLine -match 'yskas' } | Select-Object ProcessId, CommandLine)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='node.exe'\" | Where-Object { $_.CommandLine -match 'yskas' } | Select-Object ProcessId, CommandLine)",
+      "PowerShell(Stop-Process -Id 7504,11676,29264,26140,17724 -Force -ErrorAction SilentlyContinue)"
     ]
   }
 }

@@ -92,12 +92,14 @@ function MealItem({
   };
   onDelete: (id: Id<"meals">) => void;
 }) {
-  const macros: [React.ElementType, number][] = (
+  const macros = (
     [
-      [Barbell, meal.protein],
-      [Bread, meal.carbs],
-    ] as [React.ElementType, number | undefined][]
-  ).filter(([, v]) => v !== undefined) as [React.ElementType, number][];
+      { type: "protein", Icon: Barbell, value: meal.protein },
+      { type: "carbs", Icon: Bread, value: meal.carbs },
+    ] as const
+  ).filter(
+    (macro): macro is typeof macro & { value: number } => macro.value !== undefined,
+  );
 
   return (
     <div className="flex items-center gap-3 py-3">
@@ -105,9 +107,9 @@ function MealItem({
         <p className="text-mist-100 truncate">{meal.name}</p>
         {macros.length > 0 && (
           <div className="flex items-center gap-3 mt-1">
-            {macros.map(([Icon, value], i) => (
+            {macros.map(({ type, Icon, value }) => (
               <span
-                key={i}
+                key={type}
                 className="flex items-center gap-1 text-mist-500 text-md"
               >
                 <Icon size={20} weight="fill" />

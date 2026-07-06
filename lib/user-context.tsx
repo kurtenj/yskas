@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, use, useState, ReactNode } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 
 const USER_KEY = "yskas_user_id";
@@ -46,5 +46,5 @@ export function UserProvider({ children }: { children: ReactNode }) {
 }
 
 export function useUser() {
-  return useContext(UserContext);
+  return use(UserContext);
 }

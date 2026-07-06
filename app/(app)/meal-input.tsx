@@ -69,7 +69,7 @@ function useMealSuggestions({
   const uniqueMeals = (() => {
     if (!recentMeals) return [];
     const seen = new Map<string, Doc<"meals">>();
-    for (const meal of [...recentMeals].sort((a, b) => b.createdAt - a.createdAt)) {
+    for (const meal of recentMeals.toSorted((a, b) => b.createdAt - a.createdAt)) {
       if (!seen.has(meal.name)) seen.set(meal.name, meal);
     }
     return Array.from(seen.values());
@@ -205,6 +205,7 @@ function MealStatusPanel({
             onChange={(e) =>
               setEstimate({ ...estimate, calories: parseInt(e.target.value, 10) || 0 })
             }
+            aria-label="Calories"
             className="w-16 bg-transparent text-mist-200 text-2xl font-bold font-agdasima focus:outline-none text-center"
           />
         </div>
@@ -368,6 +369,7 @@ export function MealInput() {
                 }
               }}
               placeholder="What did you eat?"
+              aria-label="What did you eat?"
               disabled={busy || saving}
               className="flex-1 min-w-0 bg-transparent text-mist-50 text-base focus:outline-none placeholder:text-mist-600 disabled:opacity-50 py-1.5"
             />
