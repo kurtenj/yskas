@@ -3,7 +3,7 @@
 import React, { useMemo, useRef } from "react";
 import {
   AnimatePresence,
-  motion,
+  m,
   useInView,
   UseInViewOptions,
 } from "motion/react";
@@ -51,7 +51,7 @@ function ShimmeringText({
   const shouldAnimate = !startOnView || isInView;
 
   return (
-    <motion.span
+    <m.span
       ref={ref}
       className={cn(
         "relative inline-block bg-size-[250%_100%,auto] bg-clip-text text-transparent",
@@ -83,7 +83,7 @@ function ShimmeringText({
       }}
     >
       {text}
-    </motion.span>
+    </m.span>
   );
 }
 
@@ -100,7 +100,7 @@ export function ShimmerText() {
 
   return (
     <AnimatePresence mode="wait">
-      <motion.span
+      <m.span
         key={index}
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
@@ -114,7 +114,7 @@ export function ShimmerText() {
           color="#67787c"
           shimmerColor="#f9fbfb"
         />
-      </motion.span>
+      </m.span>
     </AnimatePresence>
   );
 }

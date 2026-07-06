@@ -7,7 +7,7 @@ import { useUser } from "@/lib/user-context";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@base-ui/react/button";
 import { Barbell, Bread, Trash } from "@phosphor-icons/react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { todayDate } from "@/lib/dates";
 
 const TOTAL = 50;
@@ -42,7 +42,7 @@ function CalorieDotGrid({
     <div className="flex flex-col gap-6 py-4">
       <div className="grid grid-cols-10 gap-2">
         {dots.map((type, i) => (
-          <motion.div
+          <m.div
             key={i}
             className={`rounded-full aspect-square ${type === "other" ? "bg-mist-200" : type === "empty" ? "bg-mist-800" : ""}`}
             style={

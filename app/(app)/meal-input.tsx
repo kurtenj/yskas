@@ -8,7 +8,7 @@ import { ArrowUp, Barbell, Bread, Check, Microphone, Stop } from "@phosphor-icon
 import { ShimmerText } from "./shimmer-text";
 import { todayDate, getLast7Days } from "@/lib/dates";
 import Fuse from "fuse.js";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { usePathname } from "next/navigation";
 
 interface Estimate {
@@ -174,7 +174,7 @@ export function MealInput() {
   const submitDisabled = !description.trim() || busy || saving;
 
   return (
-    <motion.div
+    <m.div
       className="fixed bottom-24 left-4 right-4 z-40"
       animate={{ x: isHome ? 0 : "calc(100% + 1rem)" }}
       transition={{ type: "spring", stiffness: 350, damping: 32 }}
@@ -183,7 +183,7 @@ export function MealInput() {
         <div className="rounded-2xl border border-mist-800 overflow-hidden shadow-lg">
           <AnimatePresence>
             {showPanel && (
-              <motion.div
+              <m.div
                 key="panel"
                 initial={{ height: 0 }}
                 animate={{ height: "auto" }}
@@ -272,7 +272,7 @@ export function MealInput() {
                     ))}
                   </div>
                 )}
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
 
@@ -332,6 +332,6 @@ export function MealInput() {
           </div>
         </div>
       </form>
-    </motion.div>
+    </m.div>
   );
 }

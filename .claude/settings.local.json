@@ -35,7 +35,15 @@
       "Read(//c/Users/Jonathan/AppData/Roaming/npm/**)",
       "Bash(where yarn *)",
       "Bash(where bun *)",
-      "Bash(Remove-Item -Recurse -Force \"C:\\\\Users\\\\Jonathan\\\\Workspace\\\\yskas\\\\app\\\\\\(app\\)\\\\add\")"
+      "Bash(Remove-Item -Recurse -Force \"C:\\\\Users\\\\Jonathan\\\\Workspace\\\\yskas\\\\app\\\\\\(app\\)\\\\add\")",
+      "Bash(cat \"C:\\\\Users\\\\Jonathan\\\\AppData\\\\Local\\\\Temp\\\\react-doctor-1f3ee9ac-da64-4f44-9aba-b483c589f4d1\\\\diagnostics.json\" | head -c 3000)",
+      "Bash(python3 -c ' *)",
+      "Bash(curl -s -H \"Cache-Control: no-cache\" -H \"Pragma: no-cache\" \"https://react.doctor/docs/rules/react-doctor/use-lazy-motion\")",
+      "Read(//tmp/**)",
+      "Bash(curl -s -H \"Cache-Control: no-cache\" -H \"Pragma: no-cache\" \"https://www.react.doctor/prompts/rules/react-doctor/use-lazy-motion.md\")",
+      "Bash(curl -s -H \"Cache-Control: no-cache\" -H \"Pragma: no-cache\" \"https://www.react.doctor/prompts/rules/react-doctor/rendering-svg-precision.md\")",
+      "Bash(curl -s -H \"Cache-Control: no-cache\" -H \"Pragma: no-cache\" \"https://www.react.doctor/prompts/rules/react-doctor/nextjs-no-client-side-redirect.md\")",
+      "Bash(curl -s -H \"Cache-Control: no-cache\" -H \"Pragma: no-cache\" \"https://motion.dev/docs/react-reduce-bundle-size\")"
     ]
   }
 }

@@ -7,7 +7,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 import Link from "next/link";
 import { ListNumbers, UserSwitch } from "@phosphor-icons/react";
-import { motion } from "motion/react";
+import { LazyMotion, domMax, m } from "motion/react";
 import { MealInput } from "./meal-input";
 
 const tabs = [
@@ -26,11 +26,11 @@ function Logo({ className }: { className?: string }) {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M22.1533 8.31836L28.6426 1.92871L31.4385 4.72363L22.1533 14.0098V25.9902L31.4385 35.2764L28.6426 38.0723L22.1533 31.6816V40H18.1592V31.6816L11.6699 38.0723L8.87402 35.2764L18.1592 25.9902V21.9971H14.166L4.87988 31.2822L2.08496 28.4863L8.47461 21.9971H0V18.0029H8.47461L2.08496 11.5137L4.87988 8.71777L14.166 18.0029H18.1592V14.0098L8.87402 4.72363L11.6699 1.92871L18.1592 8.31836V0H22.1533V8.31836Z"
+        d="M22.15 8.32L28.64 1.93L31.44 4.72L22.15 14.01V25.99L31.44 35.28L28.64 38.07L22.15 31.68V40H18.16V31.68L11.67 38.07L8.87 35.28L18.16 25.99V21.997H14.17L4.88 31.28L2.08 28.49L8.47 22H0V18H8.47L2.08 11.51L4.88 8.72L14.17 18H18.16V14.01L8.87 4.72L11.67 1.93L18.16 8.32V0H22.15V8.32Z"
         fill="#55C8DD"
       />
       <path
-        d="M34 14C37.3137 14 40 16.6863 40 20C40 23.3137 37.3137 26 34 26C30.6863 26 28 23.3137 28 20C28 16.6863 30.6863 14 34 14Z"
+        d="M34 14C37.31 14 40 16.69 40 20C40 23.31 37.31 26 34 26C30.69 26 28 23.31 28 20C28 16.69 30.69 14 34 14Z"
         fill="#55C8DD"
       />
     </svg>
@@ -51,7 +51,7 @@ function NavBar() {
           className="relative w-14 h-14 flex items-center justify-center"
         >
           {isActive("/") && (
-            <motion.div
+            <m.div
               layoutId="nav-indicator"
               className="absolute inset-0 rounded-full bg-mist-700/50"
               transition={{ type: "spring", stiffness: 350, damping: 22 }}
@@ -69,7 +69,7 @@ function NavBar() {
             }`}
           >
             {isActive(href) && (
-              <motion.div
+              <m.div
                 layoutId="nav-indicator"
                 className="absolute inset-0 rounded-full bg-mist-700/50"
                 transition={{ type: "spring", stiffness: 350, damping: 22 }}
@@ -102,10 +102,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <>
+    <LazyMotion features={domMax}>
       <main className="min-h-screen pb-40">{children}</main>
       <MealInput />
       <NavBar />
-    </>
+    </LazyMotion>
   );
 }
