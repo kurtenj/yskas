@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useUser } from "@/lib/user-context";
 import { ArrowUp, Barbell, Bread, Check, Microphone, Stop } from "@phosphor-icons/react";
-import { ShimmerText } from "./shimmer-text";
+import { useVoiceRecording } from "./use-voice-recording";
 import { todayDate, getLast7Days } from "@/lib/dates";
 import Fuse from "fuse.js";
 import { AnimatePresence, m } from "motion/react";
@@ -22,12 +22,13 @@ interface Estimate {
 
 type Result<T> = { ok: true; data: T } | { ok: false; error: string };
 
-async function fetchEstimate(description: string): Promise<Result<Estimate>> {
+async function fetchEstimate(description: string, signal?: AbortSignal): Promise<Result<Estimate>> {
   try {
     const res = await fetch("/api/estimate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ description }),
+      signal,
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Failed to estimate");
@@ -37,11 +38,11 @@ async function fetchEstimate(description: string): Promise<Result<Estimate>> {
   }
 }
 
-async function transcribeAudio(blob: Blob): Promise<Result<string>> {
+async function transcribeAudio(blob: Blob, signal?: AbortSignal): Promise<Result<string>> {
   try {
     const form = new FormData();
     form.append("audio", blob);
-    const res = await fetch("/api/transcribe", { method: "POST", body: form });
+    const res = await fetch("/api/transcribe", { method: "POST", body: form, signal });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Transcription failed");
     return { ok: true, data: data.transcript };
@@ -81,72 +82,9 @@ function useMealSuggestions({
   return fuse.search(description.trim()).slice(0, 3).map((r) => r.item);
 }
 
-function useVoiceRecording({
-  onTranscript,
-  onError,
-}: {
-  onTranscript: (text: string) => void;
-  onError: (message: string) => void;
-}) {
-  const [recording, setRecording] = useState(false);
-  const [transcribing, setTranscribing] = useState(false);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-
-  useEffect(() => {
-    return () => {
-      const recorder = mediaRecorderRef.current;
-      if (recorder && recorder.state !== "inactive") {
-        recorder.stream.getTracks().forEach((t) => t.stop());
-      }
-    };
-  }, []);
-
-  async function handleMic() {
-    if (recording) {
-      mediaRecorderRef.current?.stop();
-      return;
-    }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
-      const mediaRecorder = new MediaRecorder(stream, { mimeType });
-      mediaRecorderRef.current = mediaRecorder;
-      const chunks: Blob[] = [];
-
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunks.push(e.data);
-      };
-
-      mediaRecorder.onstop = async () => {
-        stream.getTracks().forEach((t) => t.stop());
-        setRecording(false);
-        setTranscribing(true);
-        const blob = new Blob(chunks, { type: mediaRecorder.mimeType || mimeType });
-        const result = await transcribeAudio(blob);
-        if (result.ok) {
-          onTranscript(result.data);
-        } else {
-          onError(result.error);
-        }
-        setTranscribing(false);
-      };
-
-      mediaRecorder.start();
-      setRecording(true);
-    } catch (err) {
-      if (err instanceof DOMException && err.name === "NotAllowedError") {
-        onError("Microphone access denied");
-      } else {
-        onError("Could not start recording");
-      }
-    }
-  }
-
-  return { recording, transcribing, handleMic };
-}
-
 function MealStatusPanel({
   busy,
+  status,
   recording,
   estimate,
   setEstimate,
@@ -154,6 +92,7 @@ function MealStatusPanel({
   suggestions,
 }: {
   busy: boolean;
+  status: string;
   recording: boolean;
   estimate: Estimate | null;
   setEstimate: (estimate: Estimate) => void;
@@ -163,7 +102,7 @@ function MealStatusPanel({
   if (busy) {
     return (
       <div className="flex items-center justify-center px-4 py-6">
-        <ShimmerText />
+        <p role="status" className="text-mist-300 text-sm">{status}</p>
       </div>
     );
   }
@@ -171,7 +110,15 @@ function MealStatusPanel({
   if (recording) {
     return (
       <div className="flex items-center justify-center px-4 py-6">
-        <p className="text-red-400 text-sm">Recording — tap mic to stop</p>
+        <p role="status" className="text-red-400 text-sm">Listening... pause when finished, or tap stop</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="px-4 py-5">
+        <p role="alert" className="text-cyan-500 text-sm">{error}</p>
       </div>
     );
   }
@@ -209,14 +156,6 @@ function MealStatusPanel({
             className="w-16 bg-transparent text-mist-200 text-2xl font-bold font-agdasima focus:outline-none text-center"
           />
         </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="px-4 py-5">
-        <p className="text-cyan-500 text-sm">{error}</p>
       </div>
     );
   }
@@ -268,20 +207,50 @@ export function MealInput() {
   const [saving, setSaving] = useState(false);
   const [focused, setFocused] = useState(false);
 
-  const { recording, transcribing, handleMic } = useVoiceRecording({
-    onTranscript: (text) => setDescription(text),
-    onError: (message) => setError(message),
+  const [transcribing, setTranscribing] = useState(false);
+  const [savedMessage, setSavedMessage] = useState("");
+  const { recording, starting, handleMic } = useVoiceRecording({
+    enabled: isHome && !!userId,
+    onAudio: async (audio, signal) => {
+      setTranscribing(true);
+      const transcript = await transcribeAudio(audio, signal);
+      setTranscribing(false);
+      if (signal.aborted) return;
+      if (!transcript.ok) {
+        setError(transcript.error);
+        return;
+      }
+      const text = transcript.data.trim();
+      if (!text) {
+        setError("No speech heard. Please try again.");
+        return;
+      }
+      setDescription(text);
+      setLoading(true);
+      const result = await fetchEstimate(text, signal);
+      setLoading(false);
+      if (signal.aborted) return;
+      if (!result.ok) {
+        setError(result.error);
+        return;
+      }
+      setEstimate(result.data);
+      await saveMeal(result.data, text);
+    },
+    onError: setError,
   });
 
   const suggestions = useMealSuggestions({ userId, description, hasEstimate: !!estimate });
 
-  const busy = loading || transcribing;
+  const busy = loading || transcribing || starting || saving;
+  const status = starting ? "Starting microphone..." : transcribing ? "Transcribing..." : loading ? "Estimating meal..." : "Saving meal...";
   const showPanel = busy || recording || !!estimate || suggestions.length > 0 || !!error;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (busy || recording) return;
     if (estimate) {
-      await handleSave();
+      await saveMeal(estimate, description.trim());
     } else {
       await submitEstimate();
     }
@@ -290,6 +259,7 @@ export function MealInput() {
   async function submitEstimate() {
     if (!description.trim() || busy) return;
     setError("");
+    setSavedMessage("");
     setLoading(true);
     const result = await fetchEstimate(description.trim());
     if (result.ok) {
@@ -300,28 +270,31 @@ export function MealInput() {
     setLoading(false);
   }
 
-  function handleSave() {
-    if (!estimate || !userId) return;
+  function saveMeal(meal: Estimate, text: string) {
+    if (!userId) return;
     setSaving(true);
     return addMeal({
       userId,
-      description: description.trim(),
-      name: estimate.name,
-      calories: estimate.calories,
-      protein: estimate.protein,
-      carbs: estimate.carbs,
-      fat: estimate.fat,
+      description: text,
+      name: meal.name,
+      calories: meal.calories,
+      protein: meal.protein,
+      carbs: meal.carbs,
+      fat: meal.fat,
       date: todayDate(),
     })
       .then(() => {
+        setSavedMessage(`Logged ${meal.name}`);
+        setFocused(false);
         setDescription("");
         setEstimate(null);
         setError("");
       })
+      .catch(() => setError("Could not save your meal. Tap Save to retry."))
       .finally(() => setSaving(false));
   }
 
-  const submitDisabled = !description.trim() || busy || saving;
+  const submitDisabled = !description.trim() || busy || recording;
 
   function handleBlurCapture(e: React.FocusEvent<HTMLDivElement>) {
     if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
@@ -352,6 +325,7 @@ export function MealInput() {
         onBlurCapture={handleBlurCapture}
       >
         <form onSubmit={handleSubmit}>
+          {savedMessage && !showPanel && <p role="status" className="mb-2 text-center text-sm text-mist-200">{savedMessage}</p>}
           <div className="rounded-2xl border border-mist-800 overflow-hidden shadow-lg">
             <AnimatePresence>
               {showPanel && (
@@ -365,6 +339,7 @@ export function MealInput() {
                 >
                   <MealStatusPanel
                     busy={busy}
+                    status={status}
                     recording={recording}
                     estimate={estimate}
                     setEstimate={setEstimate}
@@ -381,6 +356,7 @@ export function MealInput() {
                 value={description}
                 onChange={(e) => {
                   const val = e.target.value;
+                  setSavedMessage("");
                   setDescription(val);
                   if (estimate) setEstimate(null);
                   if (error) setError("");
@@ -393,15 +369,22 @@ export function MealInput() {
                 }}
                 placeholder="What did you eat?"
                 aria-label="What did you eat?"
-                disabled={busy || saving}
+                disabled={busy || recording}
                 className="flex-1 min-w-0 bg-transparent text-mist-50 text-base focus:outline-none placeholder:text-mist-600 disabled:opacity-50 py-1.5"
               />
               <div className="flex items-center gap-2 shrink-0 ml-2">
                 <button
                   type="button"
-                  onClick={handleMic}
+                  onClick={() => {
+                    if (!recording) {
+                      setEstimate(null);
+                      setError("");
+                      setSavedMessage("");
+                    }
+                    void handleMic();
+                  }}
                   disabled={busy || saving}
-                  aria-label={recording ? "Stop recording" : "Start voice input"}
+                  aria-label={recording ? "Finish and log meal" : "Log meal with voice"}
                   className={`w-11 h-11 flex items-center justify-center rounded-full transition-colors disabled:opacity-40 ${
                     recording
                       ? "bg-red-500 text-white"

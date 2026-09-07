@@ -14,7 +14,8 @@ export async function POST(req: NextRequest) {
   }
 
   const body = new FormData();
-  body.append("file", audio, "recording.webm");
+  const extension = audio.type.includes("mp4") ? "mp4" : "webm";
+  body.append("file", audio, `recording.${extension}`);
   body.append("model_id", "scribe_v1");
 
   try {

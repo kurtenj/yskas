@@ -27,7 +27,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <MotionConfig reducedMotion="user">
       <LazyMotion features={domMax}>
         <main className="min-h-screen pb-28">{children}</main>
-        <MealInput />
+        <MealInput key={userId} />
       </LazyMotion>
     </MotionConfig>
   );
