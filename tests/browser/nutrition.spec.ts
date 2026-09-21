@@ -21,6 +21,10 @@ test("failed automatic save retries the existing estimate without another provid
 test("simple summary has no rings, duplicate calorie total, or meal editing", async ({
   page,
 }) => {
+  const duplicateKeys: string[] = [];
+  page.on("console", message => {
+    if (message.text().includes("same key")) duplicateKeys.push(message.text());
+  });
   await page.goto("/");
   await expect(page.getByText("cal remaining", { exact: true })).toBeVisible();
   await expect(page.getByText(/of 1,800 kcal/)).toHaveCount(0);
@@ -37,6 +41,7 @@ test("simple summary has no rings, duplicate calorie total, or meal editing", as
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
+  expect(duplicateKeys).toEqual([]);
 });
 test("returning from an idle background refreshes the date without polling", async ({
   page,
