@@ -2,6 +2,11 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
+  requestLimits: defineTable({
+    kind: v.union(v.literal("pin"), v.literal("provider")),
+    windowStart: v.number(), count: v.number(), dayStart: v.number(), dayCount: v.number(),
+    leases: v.array(v.object({ id: v.string(), expiresAt: v.number() })),
+  }).index("by_kind", ["kind"]),
   users: defineTable({
     name: v.string(),
     dailyCalorieGoal: v.number(),
@@ -18,6 +23,7 @@ export default defineSchema({
     date: v.string(), // YYYY-MM-DD
     createdAt: v.number(),
   })
+    .index("by_date", ["date"])
     .index("by_user_date", ["userId", "date"])
     .index("by_user", ["userId"]),
 });

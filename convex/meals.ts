@@ -1,3 +1,4 @@
+import { requireIdentity } from "./access";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
@@ -7,6 +8,7 @@ export const forDate = query({
     date: v.string(),
   },
   handler: async (ctx, { userId, date }) => {
+    await requireIdentity(ctx);
     return await ctx.db
       .query("meals")
       .withIndex("by_user_date", (q) =>
@@ -23,6 +25,7 @@ export const forDateRange = query({
     dates: v.array(v.string()),
   },
   handler: async (ctx, { userId, dates }) => {
+    await requireIdentity(ctx);
     const all = await ctx.db
       .query("meals")
       .withIndex("by_user", (q) => q.eq("userId", userId))
@@ -43,6 +46,7 @@ export const add = mutation({
     date: v.string(),
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     return await ctx.db.insert("meals", {
       ...args,
       createdAt: Date.now(),
@@ -53,6 +57,7 @@ export const add = mutation({
 export const remove = mutation({
   args: { id: v.id("meals") },
   handler: async (ctx, { id }) => {
+    await requireIdentity(ctx);
     await ctx.db.delete(id);
   },
 });

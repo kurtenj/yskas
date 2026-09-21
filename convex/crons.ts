@@ -1,21 +1,28 @@
 import { cronJobs } from "convex/server";
 import { internalMutation } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { v } from "convex/values";
 
 export const purgeOldMeals = internalMutation({
-  args: {},
-  handler: async (ctx) => {
-    const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    const cutoffDate = `${cutoff.getFullYear()}-${String(cutoff.getMonth() + 1).padStart(2, "0")}-${String(cutoff.getDate()).padStart(2, "0")}`;
+  args: { cutoffDate: v.optional(v.string()) },
+  handler: async (ctx, args) => {
+    // Retain today plus the preceding 13 Chicago calendar days.
+    const today = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Chicago", year: "numeric", month: "2-digit", day: "2-digit",
+    }).format(new Date());
+    const cutoff = new Date(`${today}T00:00:00Z`);
+    cutoff.setUTCDate(cutoff.getUTCDate() - 13);
+    const cutoffDate = args.cutoffDate ?? cutoff.toISOString().slice(0, 10);
 
-    const batch = await ctx.db.query("meals").take(100);
-    const toDelete = batch.filter((m) => m.date < cutoffDate);
-    for (const meal of toDelete) {
+    const batch = await ctx.db.query("meals")
+      .withIndex("by_date", (q) => q.lt("date", cutoffDate))
+      .take(100);
+    for (const meal of batch) {
       await ctx.db.delete(meal._id);
     }
 
     if (batch.length === 100) {
-      await ctx.scheduler.runAfter(0, internal.crons.purgeOldMeals, {});
+      await ctx.scheduler.runAfter(0, internal.crons.purgeOldMeals, { cutoffDate });
     }
   },
 });

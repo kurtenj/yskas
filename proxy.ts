@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { SESSION_COOKIE, verifySession } from "./lib/session";
 
 const PUBLIC_PATHS = ["/pin", "/api/verify-pin"];
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow public paths and static assets through
   if (
-    PUBLIC_PATHS.some((p) => pathname.startsWith(p)) ||
+    PUBLIC_PATHS.includes(pathname) ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api/") ||
     pathname === "/manifest.json" ||
@@ -17,8 +18,11 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const pinVerified = request.cookies.get("pin_verified");
-  if (!pinVerified || pinVerified.value !== "true") {
+  let verified = false;
+  try {
+    verified = await verifySession(request.cookies.get(SESSION_COOKIE)?.value);
+  } catch { /* Fail closed if auth configuration is missing. */ }
+  if (!verified) {
     const url = request.nextUrl.clone();
     url.pathname = "/pin";
     return NextResponse.redirect(url);
