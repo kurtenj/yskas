@@ -17,9 +17,3 @@ export function writeProfile(
     /* The in-memory selection still works when storage is unavailable. */
   }
 }
-export function validProfile<T extends string>(
-  id: string | null,
-  profiles: { _id: T }[],
-): id is T {
-  return !!id && profiles.some((profile) => profile._id === id);
-}
