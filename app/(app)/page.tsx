@@ -90,7 +90,17 @@ function CalorieDotGrid({
           />
         ))}
       </div>
-      <div className="flex justify-end text-mist-200">
+      <div className="grid grid-cols-3 items-start gap-3 text-mist-200">
+        <NutrientProgress
+          label="Protein"
+          nutrient={totals.protein}
+          goal={proteinGoal}
+        />
+        <NutrientProgress
+          label="Fiber"
+          nutrient={totals.fiber}
+          goal={fiberGoal}
+        />
         <div className="text-right">
           <span className="text-5xl font-bold font-agdasima">
             {formatQuantity(Math.max(goal - consumed, 0))}
@@ -102,18 +112,6 @@ function CalorieDotGrid({
               : ""}
           </p>
         </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <NutrientProgress
-          label="Protein"
-          nutrient={totals.protein}
-          goal={proteinGoal}
-        />
-        <NutrientProgress
-          label="Fiber"
-          nutrient={totals.fiber}
-          goal={fiberGoal}
-        />
       </div>
     </div>
   );
@@ -129,26 +127,26 @@ function NutrientProgress({
   goal?: number;
 }) {
   return (
-    <div className="flex items-center gap-2 min-w-0">
-      <div className="min-w-0 text-sm">
-        <p className="text-mist-200">{label}</p>
-        <p>
-          {nutrient.grams === null
-            ? "Unknown"
-            : `${formatQuantity(nutrient.grams)}g${nutrient.missing ? " known" : ""}`}
-          {goal ? ` / ${formatQuantity(goal)}g` : ""}
+    <div className="min-w-0">
+      <span className="text-5xl font-bold font-agdasima">
+        {nutrient.grams === null ? "\u2014" : formatQuantity(nutrient.grams)}
+      </span>
+      <p className="text-sm">{label.toLowerCase()} (g)</p>
+      {goal ? (
+        <p className="text-xs text-mist-400">
+          of {formatQuantity(goal)}g daily
         </p>
-        {!goal && (
-          <Link href="/settings" className="text-xs underline text-mist-400">
-            Set daily goal
-          </Link>
-        )}
-        {!!nutrient.missing && (
-          <p className="text-xs text-mist-500">
-            {nutrient.missing} meal{nutrient.missing === 1 ? "" : "s"} unknown
-          </p>
-        )}
-      </div>
+      ) : (
+        <Link href="/settings" className="text-xs underline text-mist-400">
+          Set daily goal
+        </Link>
+      )}
+      {!!nutrient.missing && (
+        <p className="text-xs text-mist-500">
+          {nutrient.grams === null ? "Unknown" : "Known total"} /{" "}
+          {nutrient.missing} meal{nutrient.missing === 1 ? "" : "s"} unknown
+        </p>
+      )}
     </div>
   );
 }
