@@ -22,6 +22,13 @@ let meals = [
     date: todayDate(),
   },
 ] as Doc<"meals">[];
+if (new URLSearchParams(window.location.search).has("manyMeals")) {
+  meals = Array.from({ length: 30 }, (_, i) => ({
+    ...meals[0],
+    _id: `meal-${i}` as Doc<"meals">["_id"],
+    name: `Meal ${i + 1}`,
+  }));
+}
 let version = 0;
 const listeners = new Set<() => void>();
 const calls: { name: string; args: Record<string, unknown> }[] = [];

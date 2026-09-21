@@ -29,7 +29,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <MotionConfig reducedMotion="user">
       <LazyMotion features={domMax}>
-        <main key={`page:${userId}`} className="min-h-screen pb-28">
+        <main
+          key={`page:${userId}`}
+          className={
+            pathname === "/" ? "h-dvh overflow-hidden" : "min-h-screen pb-28"
+          }
+        >
           {children}
         </main>
         {pathname === "/" && <MealInput key={`meal-input:${userId}`} />}

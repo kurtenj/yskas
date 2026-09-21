@@ -228,8 +228,8 @@ export default function TodayPage() {
   });
 
   return (
-    <div className="h-dvh flex flex-col max-w-lg mx-auto">
-      <div className="px-6 pt-6 shrink-0">
+    <div className="h-full min-h-0 overflow-hidden flex flex-col max-w-lg mx-auto">
+      <div className="relative z-10 bg-mist-950 px-6 pt-6 shrink-0">
         <div className="flex items-center justify-between mb-4 text-mist-200">
           <p>{dateLabel}</p>
           <Link
@@ -254,7 +254,10 @@ export default function TodayPage() {
         </div>
       ) : (
         <div
-          className="px-6 overflow-y-auto flex-1 pb-28"
+          role="region"
+          aria-label="Meals"
+          tabIndex={0}
+          className="min-h-0 px-6 overflow-y-auto overscroll-contain flex-1 pb-28"
           onScroll={(e) => setScrolled(e.currentTarget.scrollTop > 0)}
           style={
             scrolled

@@ -1,4 +1,26 @@
 import { expect, test } from "@playwright/test";
+test("meal list scrolls independently while the chart stays visible", async ({
+  page,
+}) => {
+  await page.goto("/?manyMeals=1");
+  const chart = page.getByRole("img", {
+    name: "Daily calorie guide with protein and fiber highlights",
+  });
+  const meals = page.getByRole("region", { name: "Meals", exact: true });
+  const before = await chart.boundingBox();
+  await meals.evaluate((element) => {
+    element.scrollTop = element.scrollHeight;
+  });
+  await expect(page.getByText("Meal 30", { exact: true })).toBeInViewport();
+  expect(await meals.evaluate((element) => element.scrollTop)).toBeGreaterThan(
+    0,
+  );
+  expect((await chart.boundingBox())?.y).toBe(before?.y);
+  await page.mouse.move(100, 100);
+  await page.mouse.wheel(0, 800);
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  await expect(chart).toBeInViewport({ ratio: 1 });
+});
 test("failed automatic save retries the existing estimate without another provider call", async ({
   page,
 }) => {
@@ -22,7 +44,7 @@ test("simple summary has no rings, duplicate calorie total, or meal editing", as
   page,
 }) => {
   const duplicateKeys: string[] = [];
-  page.on("console", message => {
+  page.on("console", (message) => {
     if (message.text().includes("same key")) duplicateKeys.push(message.text());
   });
   await page.goto("/");
