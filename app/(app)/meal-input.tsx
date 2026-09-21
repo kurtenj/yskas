@@ -14,6 +14,7 @@ import {
   MealEstimate,
   Nutrition,
   mealReuseKey,
+  formatQuantity,
   parseEstimate,
   parseNutrition,
 } from "@/lib/nutrition";
@@ -192,12 +193,12 @@ function MealStatusPanel({
                 {meal.description} /{" "}
                 {meal.provenance?.servingMultiplier &&
                 meal.provenance.servingMultiplier !== 1
-                  ? `${meal.provenance.servingMultiplier}× original portion`
+                  ? `${formatQuantity(meal.provenance.servingMultiplier)}× original portion`
                   : "Same portion"}
               </span>
             </span>
             <span className="text-mist-400 text-sm shrink-0">
-              {meal.calories} cal
+              {formatQuantity(meal.calories)} cal
             </span>
           </button>
         ))}

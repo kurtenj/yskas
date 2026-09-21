@@ -153,5 +153,5 @@ export function mealReuseKey(
   ]);
 }
 export function formatQuantity(value: number): string {
-  return value.toLocaleString("en-US", { maximumFractionDigits: 1 });
+  return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
 }

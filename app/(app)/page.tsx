@@ -23,14 +23,12 @@ function CalorieDotGrid({
   consumed,
   goal,
   proteinG,
-  proteinGoal,
   fiberGoal,
   totals,
 }: {
   consumed: number;
   goal: number;
   proteinG: number;
-  proteinGoal?: number;
   fiberGoal?: number;
   totals: ReturnType<typeof nutritionTotals>;
 }) {
@@ -91,16 +89,8 @@ function CalorieDotGrid({
         ))}
       </div>
       <div className="grid grid-cols-3 items-start gap-3 text-mist-200">
-        <NutrientProgress
-          label="Protein"
-          nutrient={totals.protein}
-          goal={proteinGoal}
-        />
-        <NutrientProgress
-          label="Fiber"
-          nutrient={totals.fiber}
-          goal={fiberGoal}
-        />
+        <NutrientTotal label="Protein" nutrient={totals.protein} />
+        <NutrientTotal label="Fiber" nutrient={totals.fiber} />
         <div className="text-right">
           <span className="text-5xl font-bold font-agdasima">
             {formatQuantity(Math.max(goal - consumed, 0))}
@@ -117,14 +107,12 @@ function CalorieDotGrid({
   );
 }
 
-function NutrientProgress({
+function NutrientTotal({
   label,
   nutrient,
-  goal,
 }: {
   label: "Protein" | "Fiber";
   nutrient: { grams: number | null; missing: number };
-  goal?: number;
 }) {
   return (
     <div className="min-w-0">
@@ -132,21 +120,6 @@ function NutrientProgress({
         {nutrient.grams === null ? "\u2014" : formatQuantity(nutrient.grams)}
       </span>
       <p className="text-sm">{label.toLowerCase()} (g)</p>
-      {goal ? (
-        <p className="text-xs text-mist-400">
-          of {formatQuantity(goal)}g daily
-        </p>
-      ) : (
-        <Link href="/settings" className="text-xs underline text-mist-400">
-          Set daily goal
-        </Link>
-      )}
-      {!!nutrient.missing && (
-        <p className="text-xs text-mist-500">
-          {nutrient.grams === null ? "Unknown" : "Known total"} /{" "}
-          {nutrient.missing} meal{nutrient.missing === 1 ? "" : "s"} unknown
-        </p>
-      )}
     </div>
   );
 }
@@ -186,13 +159,11 @@ function MealItem({
                 <span
                   key={type}
                   title={type}
-                  aria-label={`${type}: ${value === undefined ? "unknown" : `${value} grams`}`}
+                  aria-label={`${type}: ${value === undefined ? "unknown" : `${formatQuantity(value)} grams`}`}
                   className="flex items-center gap-1 text-mist-500 text-sm"
                 >
                   <Icon size={20} weight="fill" aria-hidden="true" />
-                  {value === undefined
-                    ? "Unknown"
-                    : `${formatQuantity(value)}g`}
+                  {value === undefined ? "\u2014" : `${formatQuantity(value)}g`}
                 </span>
               ))}
           </div>
@@ -272,7 +243,6 @@ export default function TodayPage() {
           consumed={consumed}
           goal={goal}
           proteinG={proteinG}
-          proteinGoal={user.dailyProteinGoal}
           fiberGoal={user.dailyFiberGoal}
           totals={totals}
         />
