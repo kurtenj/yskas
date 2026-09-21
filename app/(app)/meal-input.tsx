@@ -1,28 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useUser } from "@/lib/user-context";
-import { ArrowUp, Barbell, Bread, Check, Microphone, Stop } from "@phosphor-icons/react";
+import { ArrowUp, Check, Microphone, Stop } from "@phosphor-icons/react";
 import { useVoiceRecording } from "./use-voice-recording";
-import { todayDate, getLast7Days } from "@/lib/dates";
+import { captureLoggingTime, getLast7Days } from "@/lib/dates";
+import { useLoggingDay } from "@/lib/use-logging-day";
+import {
+  ESTIMATE_VERSION,
+  MealEstimate,
+  Nutrition,
+  mealReuseKey,
+  parseEstimate,
+  parseNutrition,
+} from "@/lib/nutrition";
+import { NutritionFields } from "./nutrition-fields";
 import Fuse from "fuse.js";
 import { AnimatePresence, m } from "motion/react";
 import { usePathname } from "next/navigation";
 
-interface Estimate {
-  name: string;
-  calories: number;
-  protein?: number;
-  carbs?: number;
-  fat?: number;
-}
+type Estimate = MealEstimate & {
+  description: string;
+  logging: ReturnType<typeof captureLoggingTime>;
+  originalNutrition: Nutrition;
+  estimate?: typeof ESTIMATE_VERSION;
+  sourceId?: Id<"meals">;
+};
 
 type Result<T> = { ok: true; data: T } | { ok: false; error: string };
 
-async function fetchEstimate(description: string, signal?: AbortSignal): Promise<Result<Estimate>> {
+async function fetchEstimate(
+  description: string,
+  logging: ReturnType<typeof captureLoggingTime>,
+  signal?: AbortSignal,
+): Promise<Result<Estimate>> {
   try {
     const res = await fetch("/api/estimate", {
       method: "POST",
@@ -32,22 +46,45 @@ async function fetchEstimate(description: string, signal?: AbortSignal): Promise
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Failed to estimate");
-    return { ok: true, data };
+    const meal = parseEstimate(data);
+    return {
+      ok: true,
+      data: {
+        ...meal,
+        description,
+        logging,
+        originalNutrition: parseNutrition(meal),
+        estimate: data.estimate,
+      },
+    };
   } catch (err) {
-    return { ok: false, error: err instanceof Error ? err.message : "Something went wrong" };
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Something went wrong",
+    };
   }
 }
 
-async function transcribeAudio(blob: Blob, signal?: AbortSignal): Promise<Result<string>> {
+async function transcribeAudio(
+  blob: Blob,
+  signal?: AbortSignal,
+): Promise<Result<string>> {
   try {
     const form = new FormData();
     form.append("audio", blob);
-    const res = await fetch("/api/transcribe", { method: "POST", body: form, signal });
+    const res = await fetch("/api/transcribe", {
+      method: "POST",
+      body: form,
+      signal,
+    });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Transcription failed");
     return { ok: true, data: data.transcript };
   } catch (err) {
-    return { ok: false, error: err instanceof Error ? err.message : "Transcription failed" };
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Transcription failed",
+    };
   }
 }
 
@@ -60,7 +97,8 @@ function useMealSuggestions({
   description: string;
   hasEstimate: boolean;
 }) {
-  const last7Days = getLast7Days();
+  const day = useLoggingDay();
+  const last7Days = getLast7Days(day);
 
   const recentMeals = useQuery(
     api.meals.forDateRange,
@@ -70,16 +108,26 @@ function useMealSuggestions({
   const uniqueMeals = (() => {
     if (!recentMeals) return [];
     const seen = new Map<string, Doc<"meals">>();
-    for (const meal of recentMeals.toSorted((a, b) => b.createdAt - a.createdAt)) {
-      if (!seen.has(meal.name)) seen.set(meal.name, meal);
+    for (const meal of recentMeals.toSorted(
+      (a, b) => b.createdAt - a.createdAt,
+    )) {
+      const key = mealReuseKey(meal);
+      if (!seen.has(key)) seen.set(key, meal);
     }
     return Array.from(seen.values());
   })();
 
-  const fuse = new Fuse(uniqueMeals, { keys: ["name", "description"], threshold: 0.4 });
+  const fuse = new Fuse(uniqueMeals, {
+    keys: ["name", "description"],
+    threshold: 0.4,
+  });
 
-  if (hasEstimate || description.trim().length < 2 || uniqueMeals.length === 0) return [];
-  return fuse.search(description.trim()).slice(0, 3).map((r) => r.item);
+  if (hasEstimate || description.trim().length < 2 || uniqueMeals.length === 0)
+    return [];
+  return fuse
+    .search(description.trim())
+    .slice(0, 3)
+    .map((r) => r.item);
 }
 
 function MealStatusPanel({
@@ -90,6 +138,8 @@ function MealStatusPanel({
   setEstimate,
   error,
   suggestions,
+  onSelect,
+  onValidChange,
 }: {
   busy: boolean;
   status: string;
@@ -98,11 +148,15 @@ function MealStatusPanel({
   setEstimate: (estimate: Estimate) => void;
   error: string;
   suggestions: Doc<"meals">[];
+  onSelect: (meal: Doc<"meals">) => void;
+  onValidChange: (valid: boolean) => void;
 }) {
   if (busy) {
     return (
       <div className="flex items-center justify-center px-4 py-6">
-        <p role="status" className="text-mist-300 text-sm">{status}</p>
+        <p role="status" className="text-mist-300 text-sm">
+          {status}
+        </p>
       </div>
     );
   }
@@ -110,52 +164,47 @@ function MealStatusPanel({
   if (recording) {
     return (
       <div className="flex items-center justify-center px-4 py-6">
-        <p role="status" className="text-red-400 text-sm">Listening... pause when finished, or tap stop</p>
+        <p role="status" className="text-red-400 text-sm">
+          Listening... pause when finished, or tap stop
+        </p>
       </div>
     );
   }
 
-  if (error) {
+  if (error && !estimate) {
     return (
       <div className="px-4 py-5">
-        <p role="alert" className="text-cyan-500 text-sm">{error}</p>
+        <p role="alert" className="text-cyan-500 text-sm">
+          {error}
+        </p>
       </div>
     );
   }
 
   if (estimate) {
     return (
-      <div className="flex items-center gap-4 px-4 py-5">
-        <div className="min-w-0 flex-1">
-          <p className="text-mist-100 text-base truncate">{estimate.name}</p>
-          {(estimate.protein !== undefined || estimate.carbs !== undefined) && (
-            <div className="flex items-center gap-3 mt-1">
-              {estimate.protein !== undefined && (
-                <span className="flex items-center gap-1 text-mist-500 text-base">
-                  <Barbell size={20} weight="fill" />
-                  {estimate.protein}g
-                </span>
-              )}
-              {estimate.carbs !== undefined && (
-                <span className="flex items-center gap-1 text-mist-500 text-base">
-                  <Bread size={20} weight="fill" />
-                  {estimate.carbs}g
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-        <div className="shrink-0 rounded-xl border border-mist-800 bg-mist-950 px-4 py-2.5">
-          <input
-            type="number"
-            value={estimate.calories}
-            onChange={(e) =>
-              setEstimate({ ...estimate, calories: parseInt(e.target.value, 10) || 0 })
-            }
-            aria-label="Calories"
-            className="w-16 bg-transparent text-mist-200 text-2xl font-bold font-agdasima focus:outline-none text-center"
-          />
-        </div>
+      <div className="flex flex-col gap-3 px-4 py-4">
+        <p className="truncate text-mist-100">{estimate.name}</p>
+        <NutritionFields
+          key={estimate.logging.loggedAt}
+          value={estimate}
+          onChange={(nutrition) =>
+            setEstimate({
+              ...estimate,
+              protein: undefined,
+              fiber: undefined,
+              carbs: undefined,
+              fat: undefined,
+              ...nutrition,
+            })
+          }
+          onValidChange={onValidChange}
+        />
+        {error && (
+          <p role="alert" className="text-sm text-mist-200">
+            {error}
+          </p>
+        )}
       </div>
     );
   }
@@ -167,23 +216,24 @@ function MealStatusPanel({
           <button
             key={meal._id}
             type="button"
-            onClick={() =>
-              setEstimate({
-                name: meal.name,
-                calories: meal.calories,
-                protein: meal.protein,
-                carbs: meal.carbs,
-                fat: meal.fat,
-              })
-            }
+            onClick={() => onSelect(meal)}
             className={`w-full flex items-center justify-between py-4 text-left ${
               i < suggestions.length - 1 ? "border-b border-mist-800/50" : ""
             }`}
           >
             <span className="text-mist-100 text-sm font-medium truncate pr-3">
               {meal.name}
+              <span className="block text-xs text-mist-500 truncate">
+                {meal.description} /{" "}
+                {meal.provenance?.servingMultiplier &&
+                meal.provenance.servingMultiplier !== 1
+                  ? `${meal.provenance.servingMultiplier}× original portion`
+                  : "Same portion"}
+              </span>
             </span>
-            <span className="text-mist-400 text-sm shrink-0">{meal.calories} cal</span>
+            <span className="text-mist-400 text-sm shrink-0">
+              {meal.calories} cal
+            </span>
           </button>
         ))}
       </div>
@@ -199,6 +249,13 @@ export function MealInput() {
 
   const { userId } = useUser();
   const addMeal = useMutation(api.meals.add);
+  const reuseMeal = useMutation(api.meals.reuse);
+  const [valid, setValid] = useState(true);
+  const voiceLogging = useRef<ReturnType<typeof captureLoggingTime> | null>(
+    null,
+  );
+  const request = useRef<AbortController | null>(null);
+  useEffect(() => () => request.current?.abort(), []);
 
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
@@ -227,7 +284,11 @@ export function MealInput() {
       }
       setDescription(text);
       setLoading(true);
-      const result = await fetchEstimate(text, signal);
+      const result = await fetchEstimate(
+        text,
+        voiceLogging.current ?? captureLoggingTime(),
+        signal,
+      );
       setLoading(false);
       if (signal.aborted) return;
       if (!result.ok) {
@@ -235,22 +296,33 @@ export function MealInput() {
         return;
       }
       setEstimate(result.data);
-      await saveMeal(result.data, text);
+      await saveMeal(result.data);
     },
     onError: setError,
   });
 
-  const suggestions = useMealSuggestions({ userId, description, hasEstimate: !!estimate });
+  const suggestions = useMealSuggestions({
+    userId,
+    description,
+    hasEstimate: !!estimate,
+  });
 
   const busy = loading || transcribing || starting || saving;
-  const status = starting ? "Starting microphone..." : transcribing ? "Transcribing..." : loading ? "Estimating meal..." : "Saving meal...";
-  const showPanel = busy || recording || !!estimate || suggestions.length > 0 || !!error;
+  const status = starting
+    ? "Starting microphone..."
+    : transcribing
+      ? "Transcribing..."
+      : loading
+        ? "Estimating meal..."
+        : "Saving meal...";
+  const showPanel =
+    busy || recording || !!estimate || suggestions.length > 0 || !!error;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (busy || recording) return;
+    if (busy || recording || !valid) return;
     if (estimate) {
-      await saveMeal(estimate, description.trim());
+      await saveMeal(estimate);
     } else {
       await submitEstimate();
     }
@@ -261,7 +333,14 @@ export function MealInput() {
     setError("");
     setSavedMessage("");
     setLoading(true);
-    const result = await fetchEstimate(description.trim());
+    const controller = new AbortController();
+    request.current = controller;
+    const result = await fetchEstimate(
+      description.trim(),
+      captureLoggingTime(),
+      controller.signal,
+    );
+    if (controller.signal.aborted) return;
     if (result.ok) {
       setEstimate(result.data);
     } else {
@@ -270,19 +349,46 @@ export function MealInput() {
     setLoading(false);
   }
 
-  function saveMeal(meal: Estimate, text: string) {
+  function selectMeal(meal: Doc<"meals">) {
+    setDescription(meal.description);
+    setValid(true);
+    setError("");
+    setEstimate({
+      ...parseEstimate(meal),
+      description: meal.description,
+      sourceId: meal._id,
+      originalNutrition: parseNutrition(meal),
+      logging: captureLoggingTime(),
+    });
+  }
+
+  function saveMeal(meal: Estimate) {
     if (!userId) return;
     setSaving(true);
-    return addMeal({
-      userId,
-      description: text,
-      name: meal.name,
-      calories: meal.calories,
-      protein: meal.protein,
-      carbs: meal.carbs,
-      fat: meal.fat,
-      date: todayDate(),
-    })
+    const nutrition = parseNutrition(meal);
+    const operation = meal.sourceId
+      ? reuseMeal({
+          userId,
+          sourceId: meal.sourceId,
+          ...meal.logging,
+          correction: {
+            ...nutrition,
+            protein: nutrition.protein ?? null,
+            fiber: nutrition.fiber ?? null,
+            carbs: nutrition.carbs ?? null,
+            fat: nutrition.fat ?? null,
+          },
+        })
+      : addMeal({
+          userId,
+          description: meal.description,
+          name: meal.name,
+          ...nutrition,
+          ...meal.logging,
+          originalNutrition: meal.originalNutrition,
+          estimate: meal.estimate,
+        });
+    return operation
       .then(() => {
         setSavedMessage(`Logged ${meal.name}`);
         setFocused(false);
@@ -294,7 +400,7 @@ export function MealInput() {
       .finally(() => setSaving(false));
   }
 
-  const submitDisabled = !description.trim() || busy || recording;
+  const submitDisabled = !description.trim() || busy || recording || !valid;
 
   function handleBlurCapture(e: React.FocusEvent<HTMLDivElement>) {
     if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
@@ -313,7 +419,9 @@ export function MealInput() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={() => (document.activeElement as HTMLElement | null)?.blur()}
+            onClick={() =>
+              (document.activeElement as HTMLElement | null)?.blur()
+            }
           />
         )}
       </AnimatePresence>
@@ -325,7 +433,11 @@ export function MealInput() {
         onBlurCapture={handleBlurCapture}
       >
         <form onSubmit={handleSubmit}>
-          {savedMessage && !showPanel && <p role="status" className="mb-2 text-center text-sm text-mist-200">{savedMessage}</p>}
+          {savedMessage && !showPanel && (
+            <p role="status" className="mb-2 text-center text-sm text-mist-200">
+              {savedMessage}
+            </p>
+          )}
           <div className="rounded-2xl border border-mist-800 overflow-hidden shadow-lg">
             <AnimatePresence>
               {showPanel && (
@@ -345,6 +457,8 @@ export function MealInput() {
                     setEstimate={setEstimate}
                     error={error}
                     suggestions={suggestions}
+                    onSelect={selectMeal}
+                    onValidChange={setValid}
                   />
                 </m.div>
               )}
@@ -358,13 +472,15 @@ export function MealInput() {
                   const val = e.target.value;
                   setSavedMessage("");
                   setDescription(val);
+                  setValid(true);
                   if (estimate) setEstimate(null);
                   if (error) setError("");
                 }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
-                    if (!submitDisabled) handleSubmit(e as unknown as React.FormEvent);
+                    if (!submitDisabled)
+                      handleSubmit(e as unknown as React.FormEvent);
                   }
                 }}
                 placeholder="What did you eat?"
@@ -377,6 +493,8 @@ export function MealInput() {
                   type="button"
                   onClick={() => {
                     if (!recording) {
+                      voiceLogging.current = captureLoggingTime();
+                      setValid(true);
                       setEstimate(null);
                       setError("");
                       setSavedMessage("");
@@ -384,14 +502,20 @@ export function MealInput() {
                     void handleMic();
                   }}
                   disabled={busy || saving}
-                  aria-label={recording ? "Finish and log meal" : "Log meal with voice"}
+                  aria-label={
+                    recording ? "Finish and log meal" : "Log meal with voice"
+                  }
                   className={`w-11 h-11 flex items-center justify-center rounded-full transition-colors disabled:opacity-40 ${
                     recording
                       ? "bg-red-500 text-white"
                       : "text-mist-400 hover:text-mist-200"
                   }`}
                 >
-                  {recording ? <Stop size={24} weight="fill" /> : <Microphone size={24} />}
+                  {recording ? (
+                    <Stop size={24} weight="fill" />
+                  ) : (
+                    <Microphone size={24} />
+                  )}
                 </button>
                 <button
                   type="submit"
@@ -401,8 +525,8 @@ export function MealInput() {
                     submitDisabled
                       ? "bg-mist-800 text-mist-600"
                       : estimate
-                      ? "bg-[oklch(71.5%_0.143_215.2)] text-mist-950 hover:opacity-90"
-                      : "bg-mist-100 text-mist-950 hover:bg-mist-200"
+                        ? "bg-[oklch(71.5%_0.143_215.2)] text-mist-950 hover:opacity-90"
+                        : "bg-mist-100 text-mist-950 hover:bg-mist-200"
                   }`}
                 >
                   {estimate ? (

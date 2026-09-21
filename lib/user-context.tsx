@@ -2,8 +2,7 @@
 
 import { createContext, use, useState, ReactNode } from "react";
 import { Id } from "@/convex/_generated/dataModel";
-
-const USER_KEY = "yskas_user_id";
+import { readProfile, writeProfile } from "./profile-storage";
 
 interface UserContextValue {
   userId: Id<"users"> | null;
@@ -18,19 +17,22 @@ const UserContext = createContext<UserContextValue>({
 });
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [userId, setUserIdState] = useState<Id<"users"> | null>(
-    () =>
-      typeof window === "undefined"
+  const [userId, setUserIdState] = useState<Id<"users"> | null>(() => {
+    try {
+      return typeof window === "undefined"
         ? null
-        : (localStorage.getItem(USER_KEY) as Id<"users"> | null),
-  );
+        : (readProfile(window.localStorage) as Id<"users"> | null);
+    } catch {
+      return null;
+    }
+  });
 
   function setUserId(id: Id<"users"> | null) {
     setUserIdState(id);
-    if (id) {
-      localStorage.setItem(USER_KEY, id);
-    } else {
-      localStorage.removeItem(USER_KEY);
+    try {
+      writeProfile(window.localStorage, id);
+    } catch {
+      /* Storage may be blocked. */
     }
   }
 

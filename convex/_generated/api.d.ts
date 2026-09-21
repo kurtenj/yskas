@@ -17,6 +17,7 @@ import type * as access from "../access.js";
 import type * as crons from "../crons.js";
 import type * as limits from "../limits.js";
 import type * as meals from "../meals.js";
+import type * as nutritionValidators from "../nutritionValidators.js";
 import type * as users from "../users.js";
 
 /**
@@ -32,6 +33,7 @@ declare const fullApi: ApiFromModules<{
   crons: typeof crons;
   limits: typeof limits;
   meals: typeof meals;
+  nutritionValidators: typeof nutritionValidators;
   users: typeof users;
 }>;
 export declare const api: FilterApi<

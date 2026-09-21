@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Button } from "@base-ui/react/button";
 import { Field } from "@base-ui/react/field";
 import { Input } from "@base-ui/react/input";
+import { positiveGoal } from "@/lib/nutrition";
 import { ArrowLeft, Heart } from "@phosphor-icons/react";
 
 export default function SettingsPage() {
@@ -19,11 +20,15 @@ export default function SettingsPage() {
   const router = useRouter();
 
   const [goalInput, setGoalInput] = useState("");
+  const [proteinInput, setProteinInput] = useState<string | null>(null);
+  const [fiberInput, setFiberInput] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
   const [nameInput, setNameInput] = useState("");
   const [goalSaved, setGoalSaved] = useState(false);
   const [nameSaved, setNameSaved] = useState(false);
 
-  if (!userId || user === undefined) {
+  if (!userId || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-mist-800 border-t-mist-100 rounded-full animate-spin" />
@@ -33,22 +38,57 @@ export default function SettingsPage() {
 
   async function handleSaveGoal(e: React.FormEvent) {
     e.preventDefault();
-    if (!userId || !goalInput) return;
-    const val = parseInt(goalInput, 10);
-    if (isNaN(val) || val < 500 || val > 5000) return;
-    await updateGoal({ id: userId, dailyCalorieGoal: val });
-    setGoalInput("");
-    setGoalSaved(true);
-    setTimeout(() => setGoalSaved(false), 2000);
+    if (!userId || !user || saving) return;
+    setError("");
+    setSaving(true);
+    try {
+      await updateGoal({
+        id: userId,
+        dailyCalorieGoal: positiveGoal(
+          goalInput.trim() ? Number(goalInput) : user.dailyCalorieGoal,
+        ),
+        ...(proteinInput === null
+          ? {}
+          : {
+              dailyProteinGoal: proteinInput.trim()
+                ? positiveGoal(Number(proteinInput))
+                : null,
+            }),
+        ...(fiberInput === null
+          ? {}
+          : {
+              dailyFiberGoal: fiberInput.trim()
+                ? positiveGoal(Number(fiberInput))
+                : null,
+            }),
+      });
+      setGoalInput("");
+      setProteinInput(null);
+      setFiberInput(null);
+      setGoalSaved(true);
+      setTimeout(() => setGoalSaved(false), 2000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save goals.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function handleSaveName(e: React.FormEvent) {
     e.preventDefault();
-    if (!userId || !nameInput.trim()) return;
-    await updateName({ id: userId, name: nameInput.trim() });
-    setNameInput("");
-    setNameSaved(true);
-    setTimeout(() => setNameSaved(false), 2000);
+    if (!userId || !nameInput.trim() || saving) return;
+    setError("");
+    setSaving(true);
+    try {
+      await updateName({ id: userId, name: nameInput.trim() });
+      setNameInput("");
+      setNameSaved(true);
+      setTimeout(() => setNameSaved(false), 2000);
+    } catch {
+      setError("Could not save name. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   function handleSwitchUser() {
@@ -70,12 +110,22 @@ export default function SettingsPage() {
       </div>
       <p className="text-mist-400 text-sm mb-6">Manage your profile</p>
 
+      {error && (
+        <p role="alert" className="text-sm text-mist-200 mb-4">
+          {error}
+        </p>
+      )}
       {/* Profile info */}
       <div className="bg-mist-900 border border-mist-800 rounded-xl p-4 mb-6">
-        <p className="text-mist-500 text-xs uppercase tracking-wide mb-1">Current profile</p>
+        <p className="text-mist-500 text-xs uppercase tracking-wide mb-1">
+          Current profile
+        </p>
         <p className="text-mist-50 font-semibold text-lg">{user?.name}</p>
         <p className="text-mist-400 text-sm mt-0.5">
-          Daily goal: <span className="text-mist-50 font-medium">{user?.dailyCalorieGoal.toLocaleString()} cal</span>
+          Daily goal:{" "}
+          <span className="text-mist-50 font-medium">
+            {user?.dailyCalorieGoal.toLocaleString()} cal
+          </span>
         </p>
       </div>
 
@@ -86,6 +136,8 @@ export default function SettingsPage() {
           <Field.Root className="flex-1">
             <Input
               type="text"
+              aria-label="Name"
+              maxLength={80}
               value={nameInput}
               onChange={(e) => setNameInput(e.target.value)}
               placeholder={user?.name ?? "Name"}
@@ -94,7 +146,7 @@ export default function SettingsPage() {
           </Field.Root>
           <Button
             type="submit"
-            disabled={!nameInput.trim()}
+            disabled={!nameInput.trim() || saving}
             className="bg-mist-100 hover:bg-mist-200 disabled:bg-mist-800 disabled:text-mist-600 text-mist-950 font-semibold px-4 rounded-xl transition-colors whitespace-nowrap"
           >
             {nameSaved ? "Saved!" : "Save"}
@@ -102,33 +154,66 @@ export default function SettingsPage() {
         </form>
       </div>
 
-      {/* Change calorie goal */}
       <div className="mb-8">
-        <h2 className="text-mist-50 font-medium mb-1">Daily calorie goal</h2>
-        <p className="text-mist-500 text-xs mb-3">
-          Current: {user?.dailyCalorieGoal.toLocaleString()} cal/day
-        </p>
-        <form onSubmit={handleSaveGoal} className="flex gap-3">
-          <Field.Root className="flex-1">
-            <Input
-              type="number"
-              value={goalInput}
-              onChange={(e) => setGoalInput(e.target.value)}
-              placeholder={String(user?.dailyCalorieGoal ?? 1800)}
-              min="500"
-              max="5000"
-              className="w-full bg-mist-900 text-mist-50 rounded-xl px-4 py-3 border border-mist-800 focus:outline-none focus:border-mist-400 placeholder:text-mist-600"
-            />
-          </Field.Root>
+        <h2 className="text-mist-50 font-medium mb-3">Daily goals</h2>
+        <form onSubmit={handleSaveGoal} className="flex flex-col gap-3">
+          {[
+            {
+              label: "Calories (kcal)",
+              value: goalInput,
+              current: user.dailyCalorieGoal,
+              change: setGoalInput,
+              required: true,
+            },
+            {
+              label: "Protein (g)",
+              value: proteinInput ?? String(user.dailyProteinGoal ?? ""),
+              current: user.dailyProteinGoal,
+              change: setProteinInput,
+              required: false,
+            },
+            {
+              label: "Fiber (g)",
+              value: fiberInput ?? String(user.dailyFiberGoal ?? ""),
+              current: user.dailyFiberGoal,
+              change: setFiberInput,
+              required: false,
+            },
+          ].map((field) => (
+            <Field.Root key={field.label}>
+              <Field.Label className="block text-sm text-mist-400 mb-1">
+                {field.label}
+              </Field.Label>
+              <Input
+                type="number"
+                min="0"
+                step="any"
+                value={field.value}
+                onChange={(e) => field.change(e.target.value)}
+                placeholder={
+                  field.current === undefined
+                    ? "Not set"
+                    : String(field.current)
+                }
+                className="w-full bg-mist-900 text-mist-50 rounded-xl px-4 py-3 border border-mist-800 focus:outline-none focus:border-mist-400 placeholder:text-mist-600"
+              />
+            </Field.Root>
+          ))}
+          <p className="text-xs text-mist-500">
+            Leave protein or fiber blank to remove its goal. Goals use grams per
+            day.
+          </p>
           <Button
             type="submit"
-            disabled={!goalInput}
-            className="bg-mist-100 hover:bg-mist-200 disabled:bg-mist-800 disabled:text-mist-600 text-mist-950 font-semibold px-4 rounded-xl transition-colors whitespace-nowrap"
+            disabled={
+              saving ||
+              (!goalInput && proteinInput === null && fiberInput === null)
+            }
+            className="bg-mist-100 text-mist-950 rounded-xl py-3 font-semibold disabled:opacity-40"
           >
-            {goalSaved ? "Saved!" : "Save"}
+            {goalSaved ? "Saved!" : saving ? "Saving..." : "Save goals"}
           </Button>
         </form>
-        <p className="text-mist-600 text-xs mt-2">Typical deficit: 1,500–1,800 cal/day</p>
       </div>
 
       {/* Switch user */}
@@ -142,7 +227,10 @@ export default function SettingsPage() {
       </div>
 
       <footer className="mt-8 mb-4 text-center text-mist-600 text-xs leading-relaxed">
-        <p className="flex items-center justify-center gap-1">Grown in the Midwest <Heart weight="fill" className="text-rose-500" size={12} /></p>
+        <p className="flex items-center justify-center gap-1">
+          Grown in the Midwest{" "}
+          <Heart weight="fill" className="text-rose-500" size={12} />
+        </p>
         <p>Yskas v{process.env.NEXT_PUBLIC_APP_VERSION}</p>
       </footer>
     </div>
