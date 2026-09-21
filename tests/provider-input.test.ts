@@ -5,6 +5,8 @@ import { POST as estimate } from "../app/api/estimate/route";
 import { POST as transcribe } from "../app/api/transcribe/route";
 import { ESTIMATE_VERSION } from "../lib/nutrition";
 
+vi.mock("server-only", () => ({}));
+
 const mocks = vi.hoisted(() => ({
   create: vi.fn(),
   requireSession: vi.fn(async () => null),
@@ -48,8 +50,16 @@ test("valid estimate preserves nutrients and includes source version metadata", 
   mocks.create.mockResolvedValue({
     choices: [
       {
+        finish_reason: "stop",
         message: {
-          content: JSON.stringify({ name: "Eggs", calories: 140, protein: 12 }),
+          content: JSON.stringify({
+            name: "Eggs",
+            calories: 140,
+            protein: 12,
+            fiber: null,
+            carbs: null,
+            fat: null,
+          }),
         },
       },
     ],
@@ -116,7 +126,7 @@ test("provider failure releases its concurrency lease", async () => {
       headers: { "content-type": "application/json" },
     }),
   );
-  expect(response.status).toBe(500);
+  expect(response.status).toBe(502);
   expect(mocks.release).toHaveBeenCalledWith("test");
 });
 
@@ -128,7 +138,19 @@ test.each([
   async (payload) => {
     vi.stubEnv("OPENAI_API_KEY", "test-only");
     mocks.create.mockResolvedValueOnce({
-      choices: [{ message: { content: JSON.stringify(payload) } }],
+      choices: [
+        {
+          finish_reason: "stop",
+          message: {
+            content: JSON.stringify(
+              Object.assign(
+                { protein: null, fiber: null, carbs: null, fat: null },
+                payload,
+              ),
+            ),
+          },
+        },
+      ],
     });
     const response = await estimate(
       new NextRequest("https://example.test/api/estimate", {
@@ -151,7 +173,19 @@ test.each([
 ])("invalid provider values cannot become saved estimates", async (payload) => {
   vi.stubEnv("OPENAI_API_KEY", "test-only");
   mocks.create.mockResolvedValueOnce({
-    choices: [{ message: { content: JSON.stringify(payload) } }],
+    choices: [
+      {
+        finish_reason: "stop",
+        message: {
+          content: JSON.stringify(
+            Object.assign(
+              { protein: null, fiber: null, carbs: null, fat: null },
+              payload,
+            ),
+          ),
+        },
+      },
+    ],
   });
   const response = await estimate(
     new NextRequest("https://example.test/api/estimate", {
@@ -160,6 +194,6 @@ test.each([
       headers: { "content-type": "application/json" },
     }),
   );
-  expect(response.status).toBe(500);
+  expect(response.status).toBe(502);
   expect(mocks.release).toHaveBeenCalledWith("test");
 });

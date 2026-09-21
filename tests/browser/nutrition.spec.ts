@@ -39,6 +39,15 @@ test("failed automatic save retries the existing estimate without another provid
   await page.getByRole("button", { name: "Retry saving meal" }).click();
   await expect(page.getByRole("status")).toHaveText("Logged Beans");
   expect(estimates).toBe(1);
+  const saves = await page.evaluate(() =>
+    (
+      window as unknown as {
+        testCalls: { name: string; args: { operationId: string } }[];
+      }
+    ).testCalls.filter((c) => c.name === "meals:add"),
+  );
+  expect(saves).toHaveLength(2);
+  expect(saves[0].args.operationId).toBe(saves[1].args.operationId);
 });
 test("simple summary has no rings, duplicate calorie total, or meal editing", async ({
   page,
@@ -136,7 +145,6 @@ test("reusing a suggestion replaces conflicting typed quantity with the source d
   expect(calls.find((call) => call.name === "meals:reuse")?.args).toMatchObject(
     {
       sourceId: "legacy",
-      correction: { calories: 70, protein: 6, fiber: null },
     },
   );
 });

@@ -1,0 +1,105 @@
+{
+  "measuredAt": "2026-09-21T22:53:41.280Z",
+  "sample": "Six synthetic text meals per version; alternating order; one request per fixture; no meal writes; no voice calls.",
+  "baselineCommit": "e15d852e9326de38ca628513d02ce1003c01eb6d",
+  "legacy": {
+    "events": 6,
+    "acceptedMealsObserved": 0,
+    "providerAttempts": 6,
+    "estimationAttempts": 6,
+    "transcriptionAttempts": 0,
+    "callsPerAcceptedMeal": null,
+    "textCostUsd": 0.0003549,
+    "knownTextCostUsd": 0.0003549,
+    "attemptsMissingUsage": 0,
+    "knownInputTokens": 1162,
+    "knownOutputTokens": 301,
+    "transcriptionCostUsd": null,
+    "pricing": {
+      "date": "2026-09-21",
+      "model": "gpt-4o-mini",
+      "inputPerMillion": 0.15,
+      "cachedInputPerMillion": 0.075,
+      "outputPerMillion": 0.6,
+      "source": "https://developers.openai.com/api/docs/models/gpt-4o-mini"
+    },
+    "stages": {
+      "capture": {
+        "samples": 0,
+        "p50Ms": null,
+        "p95Ms": null
+      },
+      "transcribe": {
+        "samples": 0,
+        "p50Ms": null,
+        "p95Ms": null
+      },
+      "estimate": {
+        "samples": 6,
+        "p50Ms": 1119,
+        "p95Ms": 3236
+      },
+      "save": {
+        "samples": 0,
+        "p50Ms": null,
+        "p95Ms": null
+      },
+      "operation": {
+        "samples": 0,
+        "p50Ms": null,
+        "p95Ms": null
+      }
+    },
+    "limitations": "Client outcomes are best-effort observations, not billing records. Missing outcomes are not assumed abandoned. Transcription cost requires ElevenLabs billing data. Small samples do not establish production p95."
+  },
+  "strict": {
+    "events": 6,
+    "acceptedMealsObserved": 0,
+    "providerAttempts": 6,
+    "estimationAttempts": 6,
+    "transcriptionAttempts": 0,
+    "callsPerAcceptedMeal": null,
+    "textCostUsd": 0.0002787,
+    "knownTextCostUsd": 0.0002787,
+    "attemptsMissingUsage": 0,
+    "knownInputTokens": 1042,
+    "knownOutputTokens": 204,
+    "transcriptionCostUsd": null,
+    "pricing": {
+      "date": "2026-09-21",
+      "model": "gpt-4o-mini",
+      "inputPerMillion": 0.15,
+      "cachedInputPerMillion": 0.075,
+      "outputPerMillion": 0.6,
+      "source": "https://developers.openai.com/api/docs/models/gpt-4o-mini"
+    },
+    "stages": {
+      "capture": {
+        "samples": 0,
+        "p50Ms": null,
+        "p95Ms": null
+      },
+      "transcribe": {
+        "samples": 0,
+        "p50Ms": null,
+        "p95Ms": null
+      },
+      "estimate": {
+        "samples": 6,
+        "p50Ms": 986,
+        "p95Ms": 1546
+      },
+      "save": {
+        "samples": 0,
+        "p50Ms": null,
+        "p95Ms": null
+      },
+      "operation": {
+        "samples": 0,
+        "p50Ms": null,
+        "p95Ms": null
+      }
+    },
+    "limitations": "Client outcomes are best-effort observations, not billing records. Missing outcomes are not assumed abandoned. Transcription cost requires ElevenLabs billing data. Small samples do not establish production p95."
+  }
+}
