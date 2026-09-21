@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { readDescription, requestErrorResponse } from "@/lib/request-validation";
+import { requireSession } from "@/lib/session";
+import { acquireLimit, releaseLimit } from "@/lib/server-limits";
 
 const SYSTEM_PROMPT = `You are a precise nutrition estimator. When given a meal description, respond ONLY with a JSON object (no markdown, no explanation) with these fields:
 {
@@ -18,10 +21,13 @@ Rules:
 - Respond with ONLY the JSON object, nothing else`;
 
 export async function POST(req: NextRequest) {
-  const { description } = await req.json();
-
-  if (!description || typeof description !== "string") {
-    return NextResponse.json({ error: "Missing description" }, { status: 400 });
+  const denied = await requireSession(req);
+  if (denied) return denied;
+  let description: string;
+  try {
+    description = await readDescription(req);
+  } catch (error) {
+    return requestErrorResponse(error);
   }
 
   const apiKey = process.env.OPENAI_API_KEY;
@@ -33,7 +39,9 @@ export async function POST(req: NextRequest) {
   }
 
   // Initialize inside the handler so env vars are guaranteed to be resolved
-  const openai = new OpenAI({ apiKey });
+  const openai = new OpenAI({ apiKey, timeout: 45_000, maxRetries: 0 });
+  const limit = await acquireLimit("provider");
+  if (limit.response) return limit.response;
 
   try {
     const completion = await openai.chat.completions.create({
@@ -44,7 +52,7 @@ export async function POST(req: NextRequest) {
       ],
       temperature: 0.2,
       max_tokens: 150,
-    });
+    }, { signal: AbortSignal.any([req.signal, AbortSignal.timeout(45_000)]) });
 
     const raw = completion.choices[0]?.message?.content?.trim();
     if (!raw) throw new Error("Empty response from OpenAI");
@@ -67,7 +75,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("Estimate error:", message);
+    console.error("Estimate request failed");
     return NextResponse.json(
       {
         error: "Failed to estimate calories. Please try again.",
@@ -75,5 +83,7 @@ export async function POST(req: NextRequest) {
       },
       { status: 500 }
     );
+  } finally {
+    await releaseLimit(limit.leaseId);
   }
 }

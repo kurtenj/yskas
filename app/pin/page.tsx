@@ -21,12 +21,13 @@ export default function PinPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ pin }),
     })
-      .then((res) => {
+      .then(async (res) => {
         if (res.ok) {
           router.push("/");
           router.refresh();
         } else {
-          setError("Incorrect PIN. Try again.");
+          const data = await res.json();
+          setError(data.error ?? "Unable to sign in. Try again.");
         }
       })
       .catch(() => setError("Something went wrong. Try again."))
