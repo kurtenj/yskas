@@ -29,6 +29,8 @@ test("all profile/meal functions deny anonymous direct calls", async () => {
     () => t.query(api.meals.forDateRange, { userId, dates: [] }),
     () => t.mutation(api.meals.add, { userId, description: "x", name: "x", calories: 1, date: "2026-09-21" }),
     () => t.mutation(api.meals.remove, { id: mealId }),
+    () => t.mutation(api.meals.updateNutrition, { id: mealId, correction: { fiber: 1 } }),
+    () => t.mutation(api.meals.reuse, { sourceId: mealId, userId, date: "2026-09-21", loggedAt: 1 }),
   ];
   for (const call of calls) await expect(call()).rejects.toThrow("Unauthorized");
 });
