@@ -1,6 +1,7 @@
 import { requireIdentity } from "./access";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import schema from "./schema";
 import { boundedText, positiveGoal } from "../lib/nutrition";
 
 export const list = query({
@@ -12,10 +13,13 @@ export const list = query({
 });
 
 export const get = query({
-  args: { id: v.id("users") },
+  // Stored browser selections are untrusted strings, including malformed IDs.
+  args: { id: v.string() },
+  returns: v.union(schema.doc("users"), v.null()),
   handler: async (ctx, { id }) => {
     await requireIdentity(ctx);
-    return await ctx.db.get(id);
+    const normalized = ctx.db.normalizeId("users", id);
+    return normalized ? await ctx.db.get(normalized) : null;
   },
 });
 

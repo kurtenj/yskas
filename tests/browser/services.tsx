@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { getFunctionName } from "convex/server";
 import { correctNutrition } from "../../lib/nutrition";
 import { todayDate } from "../../lib/dates";
@@ -32,7 +32,8 @@ if (new URLSearchParams(window.location.search).has("manyMeals")) {
 let version = 0;
 const listeners = new Set<() => void>();
 const calls: { name: string; args: Record<string, unknown> }[] = [];
-Object.assign(window, { testCalls: calls });
+const activeQueries: Record<string, number> = {};
+Object.assign(window, { testCalls: calls, activeQueries });
 function subscribe(listener: () => void) {
   listeners.add(listener);
   return () => {
@@ -48,6 +49,15 @@ export function useQuery(
   args?: Record<string, unknown> | "skip",
 ) {
   useSyncExternalStore(subscribe, () => version);
+  const queryName = getFunctionName(ref);
+  const enabled = args !== "skip";
+  useEffect(() => {
+    if (!enabled) return;
+    activeQueries[queryName] = (activeQueries[queryName] ?? 0) + 1;
+    return () => {
+      activeQueries[queryName]--;
+    };
+  }, [queryName, enabled]);
   if (args === "skip") return undefined;
   const name = getFunctionName(ref);
   if (name === "users:get") return user;

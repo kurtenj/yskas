@@ -6,15 +6,14 @@ import { api } from "@/convex/_generated/api";
 import { redirect } from "next/navigation";
 import { LazyMotion, MotionConfig, domMax } from "motion/react";
 import { MealInput } from "./meal-input";
-import { validProfile } from "@/lib/profile-storage";
 import { usePathname } from "next/navigation";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { userId } = useUser();
-  const users = useQuery(api.users.list);
+  const user = useQuery(api.users.get, userId ? { id: userId } : "skip");
   const pathname = usePathname();
 
-  if (users === undefined) {
+  if (userId && user === undefined) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-mist-800 border-t-mist-100 rounded-full animate-spin" />
@@ -22,7 +21,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!validProfile(userId, users)) {
+  if (!userId || !user) {
     redirect("/select");
   }
 

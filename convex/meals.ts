@@ -2,6 +2,8 @@ import { requireIdentity } from "./access";
 import { prepareOperation, finishOperation } from "./mealOperations";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import schema from "./schema";
+import type { Doc } from "./_generated/dataModel";
 import {
   nutritionFields,
   estimateMetadata,
@@ -15,7 +17,7 @@ import {
   positiveGoal,
   scaleNutrition,
 } from "../lib/nutrition";
-import { formatDateKey, validateDateKey } from "../lib/dates";
+import { formatDateKey, validateDateKey, offsetDate } from "../lib/dates";
 
 function loggingFields(date: string, loggedAt?: number) {
   validateDateKey(date);
@@ -48,16 +50,31 @@ export const forDateRange = query({
     userId: v.id("users"),
     dates: v.array(v.string()),
   },
+  returns: v.array(schema.doc("meals")),
   handler: async (ctx, { userId, dates }) => {
     await requireIdentity(ctx);
     if (dates.length > 14)
       throw new Error("Date window cannot exceed 14 days.");
     dates.forEach(validateDateKey);
-    const all = await ctx.db
-      .query("meals")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
-      .collect();
-    return all.filter((m) => dates.includes(m.date));
+    const days = [...new Set(dates)].sort().reverse();
+    if (days.length && days[0] > offsetDate(days[days.length - 1], 13))
+      throw new Error("Date window cannot exceed 14 days.");
+    // Suggestions use at most 100 recent candidates. Daily totals use forDate,
+    // whose complete results must never inherit this cap.
+    const meals: Doc<"meals">[] = [];
+    for (const date of days) {
+      if (meals.length === 100) break;
+      meals.push(
+        ...(await ctx.db
+          .query("meals")
+          .withIndex("by_user_date", (q) =>
+            q.eq("userId", userId).eq("date", date),
+          )
+          .order("desc")
+          .take(100 - meals.length)),
+      );
+    }
+    return meals;
   },
 });
 

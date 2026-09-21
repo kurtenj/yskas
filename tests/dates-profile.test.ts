@@ -7,11 +7,7 @@ import {
   offsetDate,
   validateDateKey,
 } from "../lib/dates";
-import {
-  readProfile,
-  validProfile,
-  writeProfile,
-} from "../lib/profile-storage";
+import { readProfile, writeProfile } from "../lib/profile-storage";
 afterEach(() => vi.useRealTimers());
 test.each([
   ["2026-03-08T06:00:00Z", "2026-03-09T05:00:00Z"],
@@ -50,11 +46,6 @@ test("calendar windows are based on Chicago dates, not local browser offsets", (
   expect(offsetDate("2026-01-01", -13)).toBe("2025-12-19");
   for (const date of ["2026-02-30", "junk", "2026-13-01", "2026-9-1"])
     expect(() => validateDateKey(date)).toThrow();
-});
-test("invalid or deleted selections never reach ID-validated queries", () => {
-  for (const id of [null, "garbage", "deleted"])
-    expect(validProfile(id, [{ _id: "existing" }])).toBe(false);
-  expect(validProfile("existing", [{ _id: "existing" }])).toBe(true);
 });
 test("storage failures do not prevent in-memory profile selection", () => {
   const blocked = {

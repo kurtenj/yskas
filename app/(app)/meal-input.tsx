@@ -17,18 +17,20 @@ import { usePathname } from "next/navigation";
 function useMealSuggestions({
   userId,
   description,
-  hasEstimate,
+  enabled,
 }: {
   userId: Id<"users"> | null;
   description: string;
-  hasEstimate: boolean;
+  enabled: boolean;
 }) {
   const day = useLoggingDay();
   const last7Days = getLast7Days(day);
 
   const recentMeals = useQuery(
     api.meals.forDateRange,
-    userId ? { userId, dates: last7Days } : "skip",
+    userId && enabled && description.trim().length >= 2
+      ? { userId, dates: last7Days }
+      : "skip",
   );
 
   const uniqueMeals = (() => {
@@ -48,7 +50,7 @@ function useMealSuggestions({
     threshold: 0.4,
   });
 
-  if (hasEstimate || description.trim().length < 2 || uniqueMeals.length === 0)
+  if (!enabled || description.trim().length < 2 || uniqueMeals.length === 0)
     return [];
   return fuse
     .search(description.trim())
@@ -158,7 +160,7 @@ export function MealInput() {
   const suggestions = useMealSuggestions({
     userId,
     description,
-    hasEstimate: !!estimate,
+    enabled: !estimate && !busy && !recording,
   });
   const showPanel =
     busy || recording || !!estimate || suggestions.length > 0 || !!error;
