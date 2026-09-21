@@ -54,6 +54,11 @@ export function useMutation(ref: Parameters<typeof getFunctionName>[0]) {
   return async (args: Record<string, unknown>) => {
     const name = getFunctionName(ref);
     calls.push({ name, args });
+    const controls = window as unknown as { failNextSave?: boolean };
+    if (name === "meals:add" && controls.failNextSave) {
+      controls.failNextSave = false;
+      throw new Error("Simulated save failure");
+    }
     if (name === "users:updateGoal" || name === "users:updateName") {
       for (const [key, value] of Object.entries(args))
         if (key !== "id")

@@ -6,27 +6,12 @@ import { api } from "@/convex/_generated/api";
 import { useUser } from "@/lib/user-context";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { Button } from "@base-ui/react/button";
-import {
-  Barbell,
-  Bread,
-  Plant,
-  PencilSimple,
-  Trash,
-} from "@phosphor-icons/react";
+import { Barbell, Bread, Plant, Trash } from "@phosphor-icons/react";
 import Link from "next/link";
 import { m } from "motion/react";
 import { LOGGING_TIMEZONE } from "@/lib/dates";
 import { useLoggingDay } from "@/lib/use-logging-day";
-import {
-  changedNutrients,
-  formatQuantity,
-  goalProgress,
-  Nutrition,
-  nutritionTotals,
-  parseNutrition,
-  scaleNutrition,
-} from "@/lib/nutrition";
-import { NutritionFields } from "./nutrition-fields";
+import { formatQuantity, goalProgress, nutritionTotals } from "@/lib/nutrition";
 
 const TOTAL = 50;
 
@@ -56,21 +41,39 @@ function CalorieDotGrid({
     Math.round((goalProgress(proteinG * 4, goal) ?? 0) * TOTAL),
     consumedDots,
   );
-  const otherDots = consumedDots - proteinDots;
+  // Fiber is a goal-progress overlay, not a claimed calorie conversion.
+  const fiberDots = Math.min(
+    consumedDots - proteinDots,
+    totals.fiber.grams && fiberGoal
+      ? Math.max(
+          1,
+          Math.round(
+            consumedDots *
+              Math.min(goalProgress(totals.fiber.grams, fiberGoal) ?? 0, 1),
+          ),
+        )
+      : 0,
+  );
+  const otherDots = consumedDots - proteinDots - fiberDots;
 
   const dots = [
     ...Array(otherDots).fill("other"),
     ...Array(proteinDots).fill("protein"),
+    ...Array(fiberDots).fill("fiber"),
     ...Array(TOTAL - consumedDots).fill("empty"),
   ];
 
   return (
     <div className="flex flex-col gap-6 py-4">
-      <div className="grid grid-cols-10 gap-2">
+      <div
+        className="grid grid-cols-10 gap-2"
+        role="img"
+        aria-label="Daily calorie guide with protein and fiber highlights"
+      >
         {dots.map((type, i) => (
           <m.div
             key={i}
-            className={`rounded-full aspect-square ${type === "other" ? "bg-mist-200" : type === "empty" ? "bg-mist-800" : ""}`}
+            className={`rounded-full aspect-square ${type === "other" ? "bg-mist-200" : type === "empty" ? "bg-mist-800" : type === "fiber" ? "bg-emerald-500" : ""}`}
             style={
               type === "protein"
                 ? { backgroundColor: "oklch(71.5% 0.143 215.221)" }
@@ -87,19 +90,13 @@ function CalorieDotGrid({
           />
         ))}
       </div>
-      <div className="flex items-end justify-between gap-4 text-mist-200">
-        <div>
-          <span className="text-5xl font-bold font-agdasima">
-            {formatQuantity(consumed)}
-          </span>
-          <p className="text-sm">of {formatQuantity(goal)} kcal</p>
-        </div>
+      <div className="flex justify-end text-mist-200">
         <div className="text-right">
           <span className="text-5xl font-bold font-agdasima">
             {formatQuantity(Math.max(goal - consumed, 0))}
           </span>
           <p className="text-sm">
-            kcal remaining
+            cal remaining
             {consumed > goal
               ? ` / ${formatQuantity(consumed - goal)} over`
               : ""}
@@ -118,11 +115,6 @@ function CalorieDotGrid({
           goal={fiberGoal}
         />
       </div>
-      <p className="text-xs text-mist-400">
-        {totals.proteinPercent === null
-          ? "Protein share unavailable until calories and protein are known."
-          : `${formatQuantity(totals.proteinPercent)}% of consumed calories from protein`}
-      </p>
     </div>
   );
 }
@@ -136,38 +128,8 @@ function NutrientProgress({
   nutrient: { grams: number | null; missing: number };
   goal?: number;
 }) {
-  const progress = goalProgress(nutrient.grams, goal);
-  const fraction = Math.max(0, Math.min(progress ?? 0, 1));
   return (
     <div className="flex items-center gap-2 min-w-0">
-      <svg
-        viewBox="0 0 36 36"
-        className="size-10 shrink-0"
-        role="img"
-        aria-label={`${label}: ${nutrient.grams === null ? "unknown" : `${formatQuantity(nutrient.grams)} grams${nutrient.missing ? " known" : ""}`}${goal ? ` of ${goal} grams` : ", goal not set"}`}
-      >
-        <circle
-          cx="18"
-          cy="18"
-          r="15"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-          className="text-mist-800"
-        />
-        <circle
-          cx="18"
-          cy="18"
-          r="15"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-          pathLength="100"
-          strokeDasharray={`${fraction * 100} 100`}
-          transform="rotate(-90 18 18)"
-          className={label === "Fiber" ? "text-emerald-500" : "text-cyan-500"}
-        />
-      </svg>
       <div className="min-w-0 text-sm">
         <p className="text-mist-200">{label}</p>
         <p>
@@ -198,40 +160,8 @@ function MealItem({
   meal: Doc<"meals">;
   onDelete: (id: Id<"meals">) => Promise<unknown>;
 }) {
-  const update = useMutation(api.meals.updateNutrition);
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState<Nutrition>(() => parseNutrition(meal));
-  const [valid, setValid] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const original = meal.provenance
-    ? scaleNutrition(
-        meal.provenance.originalNutrition,
-        meal.provenance.servingMultiplier,
-      )
-    : null;
-  const changed = original ? changedNutrients(original, meal) : [];
-  async function save(e: React.FormEvent) {
-    e.preventDefault();
-    if (!valid || busy) return;
-    setBusy(true);
-    setError("");
-    try {
-      await update({
-        id: meal._id,
-        correction: {
-          calories: draft.calories,
-          protein: draft.protein ?? null,
-          fiber: draft.fiber ?? null,
-        },
-      });
-      setEditing(false);
-    } catch {
-      setError("Could not update this meal. Please try again.");
-    } finally {
-      setBusy(false);
-    }
-  }
   return (
     <div className="py-3">
       <div className="flex items-center gap-3">
@@ -268,28 +198,10 @@ function MealItem({
                 </span>
               ))}
           </div>
-          {changed.length > 0 && (
-            <p className="text-xs text-mist-500 mt-1">
-              Corrected: {changed.join(", ")}
-            </p>
-          )}
         </div>
         <span className="text-mist-300 text-2xl shrink-0 font-agdasima">
           {formatQuantity(meal.calories)}
         </span>
-        <Button
-          disabled={busy}
-          onClick={() => {
-            setDraft(parseNutrition(meal));
-            setValid(true);
-            setError("");
-            setEditing(!editing);
-          }}
-          className="p-1 text-mist-500 hover:text-mist-300"
-          aria-label={`Edit ${meal.name}`}
-        >
-          <PencilSimple size={16} />
-        </Button>
         <Button
           disabled={busy}
           onClick={async () => {
@@ -307,32 +219,6 @@ function MealItem({
           <Trash size={16} weight="fill" />
         </Button>
       </div>
-      {editing && (
-        <form onSubmit={save} className="flex flex-col gap-3 mt-4">
-          <NutritionFields
-            value={draft}
-            onChange={setDraft}
-            onValidChange={setValid}
-          />
-          <div className="flex gap-3 text-sm">
-            <Button
-              type="submit"
-              disabled={!valid || busy}
-              className="rounded-lg bg-mist-100 text-mist-950 px-3 py-2 disabled:opacity-50"
-            >
-              {busy ? "Saving..." : "Save"}
-            </Button>
-            <Button
-              type="button"
-              disabled={busy}
-              onClick={() => setEditing(false)}
-              className="text-mist-400"
-            >
-              Cancel
-            </Button>
-          </div>
-        </form>
-      )}
       {error && (
         <p role="alert" className="mt-2 text-sm text-mist-200">
           {error}
