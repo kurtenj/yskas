@@ -17,8 +17,8 @@ export type Nutrition = {
 export type MealEstimate = Nutrition & { name: string };
 export const ESTIMATE_VERSION = {
   model: "gpt-4o-mini",
-  promptVersion: "nutrition-2",
-  schemaVersion: 2,
+  promptVersion: "nutrition-3",
+  schemaVersion: 3,
 } as const;
 export function boundedText(
   value: unknown,

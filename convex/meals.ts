@@ -1,4 +1,5 @@
 import { requireIdentity } from "./access";
+import { prepareOperation, finishOperation } from "./mealOperations";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import {
@@ -62,6 +63,7 @@ export const forDateRange = query({
 
 export const add = mutation({
   args: {
+    operationId: v.optional(v.string()),
     userId: v.id("users"),
     description: v.string(),
     name: v.string(),
@@ -71,6 +73,7 @@ export const add = mutation({
     loggedAt: v.optional(v.number()),
     date: v.string(),
   },
+  returns: v.id("meals"),
   handler: async (ctx, args) => {
     await requireIdentity(ctx);
     if (!(await ctx.db.get(args.userId)))
@@ -93,12 +96,17 @@ export const add = mutation({
           ),
         }
       : undefined;
-    return await ctx.db.insert("meals", {
+    const name = boundedText(args.name, "Meal name", 120);
+    const description = boundedText(args.description, "Description", 2000);
+    const logging = loggingFields(args.date, args.loggedAt);
+    const operation = await prepareOperation(ctx, "add", args);
+    if (operation?.previous) return operation.previous.mealId;
+    const mealId = await ctx.db.insert("meals", {
       userId: args.userId,
-      name: boundedText(args.name, "Meal name", 120),
-      description: boundedText(args.description, "Description", 2000),
+      name,
+      description,
       ...nutrition,
-      ...loggingFields(args.date, args.loggedAt),
+      ...logging,
       provenance: {
         kind: estimate ? "estimate" : "unknown",
         originalNutrition,
@@ -107,11 +115,13 @@ export const add = mutation({
       },
       createdAt: Date.now(),
     });
+    return finishOperation(ctx, operation, args.userId, args.date, mealId);
   },
 });
 
 export const reuse = mutation({
   args: {
+    operationId: v.optional(v.string()),
     sourceId: v.id("meals"),
     userId: v.id("users"),
     date: v.string(),
@@ -119,8 +129,14 @@ export const reuse = mutation({
     factor: v.optional(v.number()),
     correction: v.optional(correction),
   },
+  returns: v.id("meals"),
   handler: async (ctx, args) => {
     await requireIdentity(ctx);
+    loggingFields(args.date, args.loggedAt);
+    if (!(await ctx.db.get(args.userId)))
+      throw new Error("Profile no longer exists.");
+    const operation = await prepareOperation(ctx, "reuse", args);
+    if (operation?.previous) return operation.previous.mealId;
     const source = await ctx.db.get(args.sourceId);
     if (!source || source.userId !== args.userId)
       throw new Error("Source meal is no longer available for this profile.");
@@ -133,7 +149,7 @@ export const reuse = mutation({
     );
     const multiplier = (source.provenance?.servingMultiplier ?? 1) * factor;
     // The snapshot survives deletion of the source by retention cleanup.
-    return ctx.db.insert("meals", {
+    const mealId = await ctx.db.insert("meals", {
       userId: args.userId,
       name: source.name,
       description: source.description,
@@ -151,6 +167,7 @@ export const reuse = mutation({
           : {}),
       },
     });
+    return finishOperation(ctx, operation, args.userId, args.date, mealId);
   },
 });
 

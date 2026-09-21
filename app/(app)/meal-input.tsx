@@ -1,92 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useState } from "react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useUser } from "@/lib/user-context";
 import { ArrowUp, Microphone, Stop } from "@phosphor-icons/react";
-import { useVoiceRecording } from "./use-voice-recording";
-import { captureLoggingTime, getLast7Days } from "@/lib/dates";
+import { useMealEntry } from "./use-meal-entry";
+import { getLast7Days } from "@/lib/dates";
 import { useLoggingDay } from "@/lib/use-logging-day";
-import {
-  ESTIMATE_VERSION,
-  MealEstimate,
-  Nutrition,
-  mealReuseKey,
-  formatQuantity,
-  parseEstimate,
-  parseNutrition,
-} from "@/lib/nutrition";
+import { mealReuseKey, formatQuantity } from "@/lib/nutrition";
 import Fuse from "fuse.js";
 import { AnimatePresence, m } from "motion/react";
 import { usePathname } from "next/navigation";
-
-type Estimate = MealEstimate & {
-  description: string;
-  logging: ReturnType<typeof captureLoggingTime>;
-  originalNutrition: Nutrition;
-  estimate?: typeof ESTIMATE_VERSION;
-  sourceId?: Id<"meals">;
-};
-
-type Result<T> = { ok: true; data: T } | { ok: false; error: string };
-
-async function fetchEstimate(
-  description: string,
-  logging: ReturnType<typeof captureLoggingTime>,
-  signal?: AbortSignal,
-): Promise<Result<Estimate>> {
-  try {
-    const res = await fetch("/api/estimate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ description }),
-      signal,
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Failed to estimate");
-    const meal = parseEstimate(data);
-    return {
-      ok: true,
-      data: {
-        ...meal,
-        description,
-        logging,
-        originalNutrition: parseNutrition(meal),
-        estimate: data.estimate,
-      },
-    };
-  } catch (err) {
-    return {
-      ok: false,
-      error: err instanceof Error ? err.message : "Something went wrong",
-    };
-  }
-}
-
-async function transcribeAudio(
-  blob: Blob,
-  signal?: AbortSignal,
-): Promise<Result<string>> {
-  try {
-    const form = new FormData();
-    form.append("audio", blob);
-    const res = await fetch("/api/transcribe", {
-      method: "POST",
-      body: form,
-      signal,
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Transcription failed");
-    return { ok: true, data: data.transcript };
-  } catch (err) {
-    return {
-      ok: false,
-      error: err instanceof Error ? err.message : "Transcription failed",
-    };
-  }
-}
 
 function useMealSuggestions({
   userId,
@@ -214,163 +140,28 @@ export function MealInput() {
   const isHome = pathname === "/";
 
   const { userId } = useUser();
-  const addMeal = useMutation(api.meals.add);
-  const reuseMeal = useMutation(api.meals.reuse);
-  const voiceLogging = useRef<ReturnType<typeof captureLoggingTime> | null>(
-    null,
-  );
-  const request = useRef<AbortController | null>(null);
-  useEffect(() => () => request.current?.abort(), []);
-
-  const [description, setDescription] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [estimate, setEstimate] = useState<Estimate | null>(null);
-  const [error, setError] = useState("");
-  const [saving, setSaving] = useState(false);
   const [focused, setFocused] = useState(false);
-
-  const [transcribing, setTranscribing] = useState(false);
-  const [savedMessage, setSavedMessage] = useState("");
-  const { recording, starting, handleMic } = useVoiceRecording({
-    enabled: isHome && !!userId,
-    onAudio: async (audio, signal) => {
-      setTranscribing(true);
-      const transcript = await transcribeAudio(audio, signal);
-      setTranscribing(false);
-      if (signal.aborted) return;
-      if (!transcript.ok) {
-        setError(transcript.error);
-        return;
-      }
-      const text = transcript.data.trim();
-      if (!text) {
-        setError("No speech heard. Please try again.");
-        return;
-      }
-      setDescription(text);
-      setLoading(true);
-      const result = await fetchEstimate(
-        text,
-        voiceLogging.current ?? captureLoggingTime(),
-        signal,
-      );
-      setLoading(false);
-      if (signal.aborted) return;
-      if (!result.ok) {
-        setError(result.error);
-        return;
-      }
-      setEstimate(result.data);
-      await saveMeal(result.data);
-    },
-    onError: setError,
-  });
-
+  const {
+    description,
+    setDescription,
+    estimate,
+    error,
+    savedMessage,
+    busy,
+    status,
+    recording,
+    saving,
+    handleSubmit,
+    selectMeal,
+    handleMic,
+  } = useMealEntry(userId, isHome, () => setFocused(false));
   const suggestions = useMealSuggestions({
     userId,
     description,
     hasEstimate: !!estimate,
   });
-
-  const busy = loading || transcribing || starting || saving;
-  const status = starting
-    ? "Starting microphone..."
-    : transcribing
-      ? "Transcribing..."
-      : loading
-        ? "Estimating meal..."
-        : "Saving meal...";
   const showPanel =
     busy || recording || !!estimate || suggestions.length > 0 || !!error;
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (busy || recording) return;
-    if (estimate) {
-      await saveMeal(estimate);
-    } else {
-      await submitEstimate();
-    }
-  }
-
-  async function submitEstimate() {
-    if (!description.trim() || busy) return;
-    setError("");
-    setSavedMessage("");
-    setLoading(true);
-    const controller = new AbortController();
-    request.current = controller;
-    const result = await fetchEstimate(
-      description.trim(),
-      captureLoggingTime(),
-      controller.signal,
-    );
-    if (controller.signal.aborted) return;
-    if (result.ok) {
-      setEstimate(result.data);
-      await saveMeal(result.data);
-    } else {
-      setError(result.error);
-    }
-    setLoading(false);
-  }
-
-  async function selectMeal(meal: Doc<"meals">) {
-    setDescription(meal.description);
-    setError("");
-    const selected: Estimate = {
-      ...parseEstimate(meal),
-      description: meal.description,
-      sourceId: meal._id,
-      originalNutrition: parseNutrition(meal),
-      logging: captureLoggingTime(),
-    };
-    setEstimate(selected);
-    await saveMeal(selected);
-  }
-
-  function saveMeal(meal: Estimate) {
-    if (!userId) return;
-    setSaving(true);
-    const nutrition = parseNutrition(meal);
-    const operation = meal.sourceId
-      ? reuseMeal({
-          userId,
-          sourceId: meal.sourceId,
-          ...meal.logging,
-          correction: {
-            ...nutrition,
-            protein: nutrition.protein ?? null,
-            fiber: nutrition.fiber ?? null,
-            carbs: nutrition.carbs ?? null,
-            fat: nutrition.fat ?? null,
-          },
-        })
-      : addMeal({
-          userId,
-          description: meal.description,
-          name: meal.name,
-          ...nutrition,
-          ...meal.logging,
-          originalNutrition: meal.originalNutrition,
-          estimate: meal.estimate,
-        });
-    return operation
-      .then(() => {
-        setSavedMessage(`Logged ${meal.name}`);
-        setFocused(false);
-        setDescription("");
-        setEstimate(null);
-        setError("");
-      })
-      .catch(() =>
-        setError(
-          "Could not save your meal. Tap Retry to save without estimating again.",
-        ),
-      )
-      .finally(() => setSaving(false));
-  }
-
   const submitDisabled = !description.trim() || busy || recording;
 
   function handleBlurCapture(e: React.FocusEvent<HTMLDivElement>) {
@@ -436,13 +227,7 @@ export function MealInput() {
               <input
                 type="text"
                 value={description}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setSavedMessage("");
-                  setDescription(val);
-                  if (estimate) setEstimate(null);
-                  if (error) setError("");
-                }}
+                onChange={(e) => setDescription(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -458,15 +243,7 @@ export function MealInput() {
               <div className="flex items-center gap-2 shrink-0 ml-2">
                 <button
                   type="button"
-                  onClick={() => {
-                    if (!recording) {
-                      voiceLogging.current = captureLoggingTime();
-                      setEstimate(null);
-                      setError("");
-                      setSavedMessage("");
-                    }
-                    void handleMic();
-                  }}
+                  onClick={() => void handleMic()}
                   disabled={busy || saving}
                   aria-label={
                     recording ? "Finish and log meal" : "Log meal with voice"

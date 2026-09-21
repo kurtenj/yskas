@@ -3,6 +3,15 @@ import { v } from "convex/values";
 import { nutritionFields, provenance } from "./nutritionValidators";
 
 export default defineSchema({
+  mealOperations: defineTable({
+    operationId: v.string(),
+    fingerprint: v.string(),
+    userId: v.id("users"),
+    date: v.string(),
+    mealId: v.id("meals"),
+  })
+    .index("by_operationId", ["operationId"])
+    .index("by_date", ["date"]),
   requestLimits: defineTable({
     kind: v.union(v.literal("pin"), v.literal("provider")),
     windowStart: v.number(),

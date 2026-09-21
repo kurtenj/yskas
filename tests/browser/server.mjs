@@ -36,7 +36,9 @@ const css = await postcss([tailwind()]).process(
   { from: resolve("app/globals.css") },
 );
 createServer((req, res) => {
-  if (req.url === "/bundle.js") {
+  if (req.url === "/api/meal-events") {
+    res.writeHead(204); res.end();
+  } else if (req.url === "/bundle.js") {
     res.setHeader("Content-Type", "text/javascript");
     res.end(result.outputFiles[0].text);
   } else if (req.url === "/style.css") {
