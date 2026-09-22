@@ -47,7 +47,7 @@ PR #5 is merged and Vercel reported a successful deployment. Earlier live verifi
 
 A read-only Vercel log query on September 21, around 19:40 Chicago time, requested the preceding hour of production logs (all branches, limit 200). Four parseable meal events were extracted without copying raw meal text/audio into this report. Two observed estimate attempts had usage totaling 370 input and 67 output tokens, calculated cost $0.0000957 and durations 893/913 ms. No successful client save or end-to-end operation event was observed in this sample. Missing observations are not evidence of failed or abandoned meals. This is neither representative production p95 nor evidence of Luna's production speed; cost per accepted meal and voice cost remain unavailable. The raw diagnostic extract is ignored, access-limited by the local workspace, and subject to the existing 14-day export retention policy.
 
-The independent Luna pilot contains 64 paid requests from the previous milestone and separate source/synthetic/indeterminate results. M6 made no paid calls. See [the pilot](milestone-5-luna-pilot.md) for the 195 ms median latency increase, 1.76x sample token cost and accuracy limitations.
+The temporary diagnostic extract was deleted after aggregation. The independent Luna pilot contains 64 paid requests from the previous milestone and separate source/synthetic/indeterminate results. M6 made no paid calls. See [the pilot](milestone-5-luna-pilot.md) for the 195 ms median latency increase, 1.76x sample token cost and accuracy limitations.
 
 ## Manual release checks and follow-up
 
