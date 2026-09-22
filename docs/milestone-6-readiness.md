@@ -4,7 +4,7 @@ Scope: KUR-272 and KUR-274, after Luna merged as `8f77335`. This milestone autom
 
 ## Repeatable verification
 
-Local verification passes: 110 unit/backend tests and 14 browser regressions, production build, TypeScript, and zero lint warnings. Production dependency audit reports zero vulnerabilities. Clean GitHub runner verification is pending the first PR workflow run.
+Local verification passes: 110 unit/backend tests and 14 browser regressions, production build, TypeScript, and zero lint warnings. Production dependency audit reports zero vulnerabilities. The first clean Linux run exposed an ambiguous status selector during overlapping save/exit animations; the regression now targets the completed notification. [PR #6 checks](https://github.com/kurtenj/yskas/pull/6/checks) record the clean-run outcome for each revision.
 
 `npm run verify` runs Node tests, Vitest, ESLint with zero permitted warnings, Next production build, explicit TypeScript and Chromium regressions. Node 24, `npm ci`, and Playwright Chromium are the only clean-checkout prerequisites. No environment files or production credentials are needed. The verification build uses a loopback Convex URL and must not be deployed; normal Vercel builds use configured production environment values.
 
