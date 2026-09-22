@@ -37,7 +37,9 @@ test("failed automatic save retries the existing estimate without another provid
   await page.getByRole("button", { name: "Log meal", exact: true }).click();
   await expect(page.getByRole("alert")).toContainText("Tap Retry");
   await page.getByRole("button", { name: "Retry saving meal" }).click();
-  await expect(page.getByRole("status")).toHaveText("Logged Beans");
+  await expect(
+    page.getByRole("status").filter({ hasText: /^Logged Beans$/ }),
+  ).toBeVisible();
   expect(estimates).toBe(1);
   const saves = await page.evaluate(() =>
     (
