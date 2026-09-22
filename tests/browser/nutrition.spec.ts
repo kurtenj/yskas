@@ -104,7 +104,7 @@ test("text calculates and saves immediately, with fiber in the main dots", async
     .getByRole("textbox", { name: "What did you eat?" })
     .fill("one cup beans");
   await page.getByRole("button", { name: "Log meal", exact: true }).click();
-  await expect(page.getByRole("status")).toHaveText("Logged Beans");
+  await expect(page.getByRole("status").filter({ hasText: /^Logged Beans$/ })).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Save meal", exact: true }),
   ).toHaveCount(0);
@@ -135,7 +135,7 @@ test("reusing a suggestion replaces conflicting typed quantity with the source d
     .getByRole("textbox", { name: "What did you eat?" })
     .fill("two boiled eggs");
   await page.getByRole("button", { name: /Eggs.*one boiled egg/ }).click();
-  await expect(page.getByRole("status")).toHaveText("Logged Eggs");
+  await expect(page.getByRole("status").filter({ hasText: /^Logged Eggs$/ })).toBeVisible();
   const calls = await page.evaluate(
     () =>
       (
@@ -172,7 +172,7 @@ test("midnight refreshes the visible day but preserves an in-flight meal's loggi
   await page.clock.fastForward(120_000);
   await expect(page.getByText("Tuesday, September 22")).toBeVisible();
   release();
-  await expect(page.getByRole("status")).toHaveText("Logged Beans");
+  await expect(page.getByRole("status").filter({ hasText: /^Logged Beans$/ })).toBeVisible();
   const calls = await page.evaluate(
     () =>
       (
