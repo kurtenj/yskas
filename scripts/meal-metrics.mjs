@@ -9,6 +9,17 @@ export const pricing = {
   outputPerMillion: 0.6,
   source: "https://developers.openai.com/api/docs/models/gpt-4o-mini",
 };
+export const pricingByModel = {
+  [pricing.model]: pricing,
+  "gpt-5.6-luna": {
+    date: "2026-09-21",
+    model: "gpt-5.6-luna",
+    inputPerMillion: 0.2,
+    cachedInputPerMillion: 0.02,
+    outputPerMillion: 1.2,
+    source: "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
+  },
+};
 const percentile = (values, p) =>
   values.length
     ? [...values].sort((a, b) => a - b)[Math.ceil(values.length * p) - 1]
@@ -33,8 +44,11 @@ export function summarize(events) {
     outputTokens = 0;
   for (const e of estimates) {
     const u = e.provider;
+    const rates = Object.hasOwn(pricingByModel, u?.model)
+      ? pricingByModel[u.model]
+      : null;
     if (
-      u?.model !== pricing.model ||
+      !rates ||
       u?.inputTokens == null ||
       u?.outputTokens == null
     ) {
@@ -46,9 +60,9 @@ export function summarize(events) {
     inputTokens += u.inputTokens;
     outputTokens += u.outputTokens;
     textCost +=
-      ((u.inputTokens - cached) * pricing.inputPerMillion +
-        cached * pricing.cachedInputPerMillion +
-        u.outputTokens * pricing.outputPerMillion) /
+      ((u.inputTokens - cached) * rates.inputPerMillion +
+        cached * rates.cachedInputPerMillion +
+        u.outputTokens * rates.outputPerMillion) /
       1e6;
   }
   const stages = {};
@@ -89,7 +103,7 @@ export function summarize(events) {
     knownInputTokens: inputTokens,
     knownOutputTokens: outputTokens,
     transcriptionCostUsd: null,
-    pricing,
+    pricing: pricingByModel,
     stages,
     limitations:
       "Client outcomes are best-effort observations, not billing records. Missing outcomes are not assumed abandoned. Transcription cost requires ElevenLabs billing data. Small samples do not establish production p95.",

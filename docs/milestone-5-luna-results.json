@@ -1,0 +1,3286 @@
+{
+  "measuredAt": "2026-09-22T00:04:52.133Z",
+  "fixtureVersion": 1,
+  "referenceRetrieved": "2026-09-21",
+  "prompt": "Estimate nutrition for the meal described. Preserve explicit portions, units, and nutrition-label values. For unspecified portions use typical US servings. Return a short meal name (3-6 words), calories in kcal, and protein, fiber, carbs and fat in grams. Values must be nonnegative; preserve decimals. Use null for an unknown nutrient, never invent zero. Return only the requested JSON fields; no explanations.",
+  "version": {
+    "model": "gpt-4o-mini",
+    "promptVersion": "nutrition-3",
+    "schemaVersion": 3
+  },
+  "prices": {
+    "gpt-4o-mini": [
+      0.15,
+      0.075,
+      0.6
+    ],
+    "gpt-5.6-luna": [
+      0.2,
+      0.02,
+      1.2
+    ]
+  },
+  "budgetUsd": 0.1,
+  "rounds": 2,
+  "rows": [
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "label-0.5",
+      "category": "label",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 2048,
+      "usage": {
+        "prompt_tokens": 201,
+        "completion_tokens": 34,
+        "total_tokens": 235,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000050549999999999995,
+      "meal": {
+        "calories": 140,
+        "protein": 7.5,
+        "fiber": 2,
+        "carbs": 17,
+        "fat": 4.5,
+        "name": "Half Cup Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 140,
+          "actual": 140,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 7.5,
+          "actual": 7.5,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 2,
+          "actual": 2,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "label-0.5",
+      "category": "label",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1359,
+      "usage": {
+        "prompt_tokens": 200,
+        "completion_tokens": 40,
+        "total_tokens": 240,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000088,
+      "meal": {
+        "calories": 140,
+        "protein": 7.5,
+        "fiber": 2,
+        "carbs": 17,
+        "fat": 4.5,
+        "name": "Half Cup Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 140,
+          "actual": 140,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 7.5,
+          "actual": 7.5,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 2,
+          "actual": 2,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "label-1",
+      "category": "label",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 973,
+      "usage": {
+        "prompt_tokens": 198,
+        "completion_tokens": 34,
+        "total_tokens": 232,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000804,
+      "meal": {
+        "calories": 280,
+        "protein": 15,
+        "fiber": 4,
+        "carbs": 34,
+        "fat": 9,
+        "name": "Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 280,
+          "actual": 280,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 15,
+          "actual": 15,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 4,
+          "actual": 4,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "label-1",
+      "category": "label",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 709,
+      "usage": {
+        "prompt_tokens": 199,
+        "completion_tokens": 28,
+        "total_tokens": 227,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000046649999999999996,
+      "meal": {
+        "calories": 280,
+        "protein": 15,
+        "fiber": 4,
+        "carbs": 34,
+        "fat": 9,
+        "name": "Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 280,
+          "actual": 280,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 15,
+          "actual": 15,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 4,
+          "actual": 4,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "label-2",
+      "category": "label",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 982,
+      "usage": {
+        "prompt_tokens": 199,
+        "completion_tokens": 28,
+        "total_tokens": 227,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000046649999999999996,
+      "meal": {
+        "calories": 560,
+        "protein": 30,
+        "fiber": 8,
+        "carbs": 68,
+        "fat": 18,
+        "name": "Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 560,
+          "actual": 560,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 30,
+          "actual": 30,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 8,
+          "actual": 8,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "label-2",
+      "category": "label",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1021,
+      "usage": {
+        "prompt_tokens": 198,
+        "completion_tokens": 34,
+        "total_tokens": 232,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000804,
+      "meal": {
+        "calories": 560,
+        "protein": 30,
+        "fiber": 8,
+        "carbs": 68,
+        "fat": 18,
+        "name": "Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 560,
+          "actual": 560,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 30,
+          "actual": 30,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 8,
+          "actual": 8,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "label-4",
+      "category": "label",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1160,
+      "usage": {
+        "prompt_tokens": 198,
+        "completion_tokens": 37,
+        "total_tokens": 235,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000084,
+      "meal": {
+        "calories": 1120,
+        "protein": 60,
+        "fiber": 16,
+        "carbs": 136,
+        "fat": 36,
+        "name": "Four Cups Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 1120,
+          "actual": 1120,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 60,
+          "actual": 60,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 16,
+          "actual": 16,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "label-4",
+      "category": "label",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1116,
+      "usage": {
+        "prompt_tokens": 199,
+        "completion_tokens": 29,
+        "total_tokens": 228,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.00004725,
+      "meal": {
+        "calories": 1120,
+        "protein": 60,
+        "fiber": 16,
+        "carbs": 136,
+        "fat": 36,
+        "name": "Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 1120,
+          "actual": 1120,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 60,
+          "actual": 60,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 16,
+          "actual": 16,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "apple",
+      "category": "food-reference",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1157,
+      "usage": {
+        "prompt_tokens": 174,
+        "completion_tokens": 36,
+        "total_tokens": 210,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000047699999999999994,
+      "meal": {
+        "calories": 126,
+        "protein": 0.6,
+        "fiber": 5.4,
+        "carbs": 33.5,
+        "fat": 0.4,
+        "name": "Raw Apple"
+      },
+      "scores": {
+        "calories": {
+          "expected": 130,
+          "actual": 126,
+          "error": -4,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 0.6,
+          "error": -0.4,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 5,
+          "actual": 5.4,
+          "error": 0.40000000000000036,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "apple",
+      "category": "food-reference",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1120,
+      "usage": {
+        "prompt_tokens": 173,
+        "completion_tokens": 42,
+        "total_tokens": 215,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000085,
+      "meal": {
+        "calories": 126,
+        "protein": 0.8,
+        "fiber": 5.9,
+        "carbs": 33.5,
+        "fat": 0.4,
+        "name": "Raw Apple"
+      },
+      "scores": {
+        "calories": {
+          "expected": 130,
+          "actual": 126,
+          "error": -4,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 0.8,
+          "error": -0.19999999999999996,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 5,
+          "actual": 5.9,
+          "error": 0.9000000000000004,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "banana",
+      "category": "food-reference",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1277,
+      "usage": {
+        "prompt_tokens": 173,
+        "completion_tokens": 44,
+        "total_tokens": 217,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.00008740000000000001,
+      "meal": {
+        "calories": 112.14,
+        "protein": 1.39,
+        "fiber": 2.94,
+        "carbs": 28.71,
+        "fat": 0.41,
+        "name": "Raw Banana"
+      },
+      "scores": {
+        "calories": {
+          "expected": 110,
+          "actual": 112.14,
+          "error": 2.1400000000000006,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1.39,
+          "error": 0.3899999999999999,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 3,
+          "actual": 2.94,
+          "error": -0.06000000000000005,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "banana",
+      "category": "food-reference",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1171,
+      "usage": {
+        "prompt_tokens": 174,
+        "completion_tokens": 36,
+        "total_tokens": 210,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000047699999999999994,
+      "meal": {
+        "calories": 112,
+        "protein": 1.3,
+        "fiber": 3.1,
+        "carbs": 28.8,
+        "fat": 0.3,
+        "name": "Raw Banana"
+      },
+      "scores": {
+        "calories": {
+          "expected": 110,
+          "actual": 112,
+          "error": 2,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1.3,
+          "error": 0.30000000000000004,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 3,
+          "actual": 3.1,
+          "error": 0.10000000000000009,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "orange",
+      "category": "food-reference",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 828,
+      "usage": {
+        "prompt_tokens": 174,
+        "completion_tokens": 36,
+        "total_tokens": 210,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000047699999999999994,
+      "meal": {
+        "calories": 62,
+        "protein": 1.2,
+        "fiber": 3.1,
+        "carbs": 15.4,
+        "fat": 0.2,
+        "name": "Raw Orange"
+      },
+      "scores": {
+        "calories": {
+          "expected": 80,
+          "actual": 62,
+          "error": -18,
+          "pass": false
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1.2,
+          "error": 0.19999999999999996,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 3,
+          "actual": 3.1,
+          "error": 0.10000000000000009,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "orange",
+      "category": "food-reference",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1314,
+      "usage": {
+        "prompt_tokens": 173,
+        "completion_tokens": 42,
+        "total_tokens": 215,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000085,
+      "meal": {
+        "calories": 73,
+        "protein": 1.5,
+        "fiber": 3.7,
+        "carbs": 18.3,
+        "fat": 0.2,
+        "name": "Raw Orange"
+      },
+      "scores": {
+        "calories": {
+          "expected": 80,
+          "actual": 73,
+          "error": -7,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1.5,
+          "error": 0.5,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 3,
+          "actual": 3.7,
+          "error": 0.7000000000000002,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "pear",
+      "category": "food-reference",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1100,
+      "usage": {
+        "prompt_tokens": 173,
+        "completion_tokens": 42,
+        "total_tokens": 215,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000085,
+      "meal": {
+        "calories": 95,
+        "protein": 0.6,
+        "fiber": 5.1,
+        "carbs": 25.2,
+        "fat": 0.2,
+        "name": "Raw Pear"
+      },
+      "scores": {
+        "calories": {
+          "expected": 100,
+          "actual": 95,
+          "error": -5,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 0.6,
+          "error": -0.4,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 6,
+          "actual": 5.1,
+          "error": -0.9000000000000004,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "pear",
+      "category": "food-reference",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 880,
+      "usage": {
+        "prompt_tokens": 174,
+        "completion_tokens": 36,
+        "total_tokens": 210,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000047699999999999994,
+      "meal": {
+        "calories": 100,
+        "protein": 0.5,
+        "fiber": 5.1,
+        "carbs": 27.6,
+        "fat": 0.3,
+        "name": "Raw Pear"
+      },
+      "scores": {
+        "calories": {
+          "expected": 100,
+          "actual": 100,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 0.5,
+          "error": -0.5,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 6,
+          "actual": 5.1,
+          "error": -0.9000000000000004,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "strawberries",
+      "category": "food-reference",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 854,
+      "usage": {
+        "prompt_tokens": 174,
+        "completion_tokens": 37,
+        "total_tokens": 211,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000048299999999999995,
+      "meal": {
+        "calories": 49,
+        "protein": 1.02,
+        "fiber": 3,
+        "carbs": 11.65,
+        "fat": 0.3,
+        "name": "Raw Strawberries"
+      },
+      "scores": {
+        "calories": {
+          "expected": 50,
+          "actual": 49,
+          "error": -1,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1.02,
+          "error": 0.020000000000000018,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 2,
+          "actual": 3,
+          "error": 1,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "strawberries",
+      "category": "food-reference",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1247,
+      "usage": {
+        "prompt_tokens": 173,
+        "completion_tokens": 41,
+        "total_tokens": 214,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.00008379999999999999,
+      "meal": {
+        "calories": 47,
+        "protein": 1,
+        "fiber": 3.1,
+        "carbs": 11.3,
+        "fat": 0.5,
+        "name": "Raw Strawberries"
+      },
+      "scores": {
+        "calories": {
+          "expected": 50,
+          "actual": 47,
+          "error": -3,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 2,
+          "actual": 3.1,
+          "error": 1.1,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "kiwifruit",
+      "category": "food-reference",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 3140,
+      "usage": {
+        "prompt_tokens": 176,
+        "completion_tokens": 45,
+        "total_tokens": 221,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000892,
+      "meal": {
+        "calories": 90,
+        "protein": 1.6,
+        "fiber": 4.4,
+        "carbs": 21.7,
+        "fat": 0.7,
+        "name": "Raw Kiwifruit"
+      },
+      "scores": {
+        "calories": {
+          "expected": 90,
+          "actual": 90,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1.6,
+          "error": 0.6000000000000001,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 4,
+          "actual": 4.4,
+          "error": 0.40000000000000036,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "kiwifruit",
+      "category": "food-reference",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 897,
+      "usage": {
+        "prompt_tokens": 177,
+        "completion_tokens": 39,
+        "total_tokens": 216,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.00004995,
+      "meal": {
+        "calories": 61,
+        "protein": 1.14,
+        "fiber": 3,
+        "carbs": 14.66,
+        "fat": 0.52,
+        "name": "Raw Kiwifruit"
+      },
+      "scores": {
+        "calories": {
+          "expected": 90,
+          "actual": 61,
+          "error": -29,
+          "pass": false
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1.14,
+          "error": 0.1399999999999999,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 4,
+          "actual": 3,
+          "error": -1,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "half-bar",
+      "category": "synthetic-contract",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 801,
+      "usage": {
+        "prompt_tokens": 196,
+        "completion_tokens": 33,
+        "total_tokens": 229,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000492,
+      "meal": {
+        "calories": 105,
+        "protein": 10,
+        "fiber": 3.5,
+        "carbs": 11.5,
+        "fat": 4,
+        "name": "Half Protein Bar"
+      },
+      "scores": {
+        "calories": {
+          "expected": 105,
+          "actual": 105,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 10,
+          "actual": 10,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 3.5,
+          "actual": 3.5,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "half-bar",
+      "category": "synthetic-contract",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 911,
+      "usage": {
+        "prompt_tokens": 195,
+        "completion_tokens": 39,
+        "total_tokens": 234,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000858,
+      "meal": {
+        "calories": 105,
+        "protein": 10,
+        "fiber": 3.5,
+        "carbs": 11.5,
+        "fat": 4,
+        "name": "Half Protein Bar"
+      },
+      "scores": {
+        "calories": {
+          "expected": 105,
+          "actual": 105,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 10,
+          "actual": 10,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 3.5,
+          "actual": 3.5,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "shake",
+      "category": "synthetic-contract",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1023,
+      "usage": {
+        "prompt_tokens": 230,
+        "completion_tokens": 41,
+        "total_tokens": 271,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.00009519999999999998,
+      "meal": {
+        "calories": 270,
+        "protein": 31.5,
+        "fiber": 2,
+        "carbs": 15.5,
+        "fat": 8.5,
+        "name": "Milk Protein Powder"
+      },
+      "scores": {
+        "calories": {
+          "expected": 270,
+          "actual": 270,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 31.5,
+          "actual": 31.5,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 2,
+          "actual": 2,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "shake",
+      "category": "synthetic-contract",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1130,
+      "usage": {
+        "prompt_tokens": 231,
+        "completion_tokens": 31,
+        "total_tokens": 262,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.00005325,
+      "meal": {
+        "calories": 210,
+        "protein": 27,
+        "fiber": 2,
+        "carbs": 8,
+        "fat": 4,
+        "name": "Milk and Protein Powder Shake"
+      },
+      "scores": {
+        "calories": {
+          "expected": 270,
+          "actual": 210,
+          "error": -60,
+          "pass": false
+        },
+        "protein": {
+          "expected": 31.5,
+          "actual": 27,
+          "error": -4.5,
+          "pass": false
+        },
+        "fiber": {
+          "expected": 2,
+          "actual": 2,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "missing-fiber",
+      "category": "synthetic-contract",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 743,
+      "usage": {
+        "prompt_tokens": 196,
+        "completion_tokens": 29,
+        "total_tokens": 225,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000468,
+      "meal": {
+        "calories": 300,
+        "protein": 25,
+        "name": "Experimental Meal Pack"
+      },
+      "scores": {
+        "calories": {
+          "expected": 300,
+          "actual": 300,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 25,
+          "actual": 25,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": null,
+          "actual": null,
+          "error": null,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "missing-fiber",
+      "category": "synthetic-contract",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1073,
+      "usage": {
+        "prompt_tokens": 195,
+        "completion_tokens": 35,
+        "total_tokens": 230,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000081,
+      "meal": {
+        "calories": 300,
+        "protein": 25,
+        "name": "Experimental Meal Pack"
+      },
+      "scores": {
+        "calories": {
+          "expected": 300,
+          "actual": 300,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 25,
+          "actual": 25,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": null,
+          "actual": null,
+          "error": null,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "zero",
+      "category": "synthetic-contract",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1016,
+      "usage": {
+        "prompt_tokens": 189,
+        "completion_tokens": 38,
+        "total_tokens": 227,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.00008340000000000001,
+      "meal": {
+        "calories": 0,
+        "protein": 0,
+        "fiber": 0,
+        "carbs": 0,
+        "fat": 0,
+        "name": "Zero-Calorie Bottled Drink"
+      },
+      "scores": {
+        "calories": {
+          "expected": 0,
+          "actual": 0,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 0,
+          "actual": 0,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 0,
+          "actual": 0,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "zero",
+      "category": "synthetic-contract",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 936,
+      "usage": {
+        "prompt_tokens": 190,
+        "completion_tokens": 30,
+        "total_tokens": 220,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000465,
+      "meal": {
+        "calories": 0,
+        "protein": 0,
+        "fiber": 0,
+        "carbs": 0,
+        "fat": 0,
+        "name": "Zero Calorie Beverage"
+      },
+      "scores": {
+        "calories": {
+          "expected": 0,
+          "actual": 0,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 0,
+          "actual": 0,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 0,
+          "actual": 0,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "vague-shake",
+      "category": "indeterminate",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 774,
+      "usage": {
+        "prompt_tokens": 167,
+        "completion_tokens": 30,
+        "total_tokens": 197,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000043049999999999996,
+      "meal": {
+        "calories": 300,
+        "protein": 30,
+        "carbs": 15,
+        "fat": 8,
+        "name": "Milk with Protein Powder"
+      },
+      "scores": null
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "vague-shake",
+      "category": "indeterminate",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 1133,
+      "usage": {
+        "prompt_tokens": 166,
+        "completion_tokens": 35,
+        "total_tokens": 201,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000752,
+      "meal": {
+        "calories": 220,
+        "protein": 29,
+        "fiber": 1,
+        "carbs": 18,
+        "fat": 5,
+        "name": "Protein Powder Milk"
+      },
+      "scores": null
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "vague-dinner",
+      "category": "indeterminate",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 827,
+      "usage": {
+        "prompt_tokens": 169,
+        "completion_tokens": 36,
+        "total_tokens": 205,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000077,
+      "meal": {
+        "calories": 650,
+        "protein": 38,
+        "fiber": 10,
+        "carbs": 82,
+        "fat": 17,
+        "name": "Chicken Rice and Beans"
+      },
+      "scores": null
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "vague-dinner",
+      "category": "indeterminate",
+      "round": 0,
+      "outcome": "success",
+      "durationMs": 691,
+      "usage": {
+        "prompt_tokens": 170,
+        "completion_tokens": 30,
+        "total_tokens": 200,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000435,
+      "meal": {
+        "calories": 600,
+        "protein": 40,
+        "fiber": 10,
+        "carbs": 70,
+        "fat": 15,
+        "name": "Chicken Rice and Beans"
+      },
+      "scores": null
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "label-0.5",
+      "category": "label",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 1118,
+      "usage": {
+        "prompt_tokens": 200,
+        "completion_tokens": 38,
+        "total_tokens": 238,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000856,
+      "meal": {
+        "calories": 140,
+        "protein": 7.5,
+        "fiber": 2,
+        "carbs": 17,
+        "fat": 4.5,
+        "name": "Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 140,
+          "actual": 140,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 7.5,
+          "actual": 7.5,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 2,
+          "actual": 2,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "label-0.5",
+      "category": "label",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 685,
+      "usage": {
+        "prompt_tokens": 201,
+        "completion_tokens": 32,
+        "total_tokens": 233,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.00004934999999999999,
+      "meal": {
+        "calories": 140,
+        "protein": 7.5,
+        "fiber": 2,
+        "carbs": 17,
+        "fat": 4.5,
+        "name": "Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 140,
+          "actual": 140,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 7.5,
+          "actual": 7.5,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 2,
+          "actual": 2,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "label-1",
+      "category": "label",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 776,
+      "usage": {
+        "prompt_tokens": 199,
+        "completion_tokens": 28,
+        "total_tokens": 227,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000046649999999999996,
+      "meal": {
+        "calories": 280,
+        "protein": 15,
+        "fiber": 4,
+        "carbs": 34,
+        "fat": 9,
+        "name": "Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 280,
+          "actual": 280,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 15,
+          "actual": 15,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 4,
+          "actual": 4,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "label-1",
+      "category": "label",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 792,
+      "usage": {
+        "prompt_tokens": 198,
+        "completion_tokens": 34,
+        "total_tokens": 232,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000804,
+      "meal": {
+        "calories": 280,
+        "protein": 15,
+        "fiber": 4,
+        "carbs": 34,
+        "fat": 9,
+        "name": "Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 280,
+          "actual": 280,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 15,
+          "actual": 15,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 4,
+          "actual": 4,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "label-2",
+      "category": "label",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 723,
+      "usage": {
+        "prompt_tokens": 198,
+        "completion_tokens": 34,
+        "total_tokens": 232,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000804,
+      "meal": {
+        "calories": 560,
+        "protein": 30,
+        "fiber": 8,
+        "carbs": 68,
+        "fat": 18,
+        "name": "Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 560,
+          "actual": 560,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 30,
+          "actual": 30,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 8,
+          "actual": 8,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "label-2",
+      "category": "label",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 1490,
+      "usage": {
+        "prompt_tokens": 199,
+        "completion_tokens": 28,
+        "total_tokens": 227,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000046649999999999996,
+      "meal": {
+        "calories": 560,
+        "protein": 30,
+        "fiber": 8,
+        "carbs": 68,
+        "fat": 18,
+        "name": "Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 560,
+          "actual": 560,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 30,
+          "actual": 30,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 8,
+          "actual": 8,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "label-4",
+      "category": "label",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 680,
+      "usage": {
+        "prompt_tokens": 199,
+        "completion_tokens": 29,
+        "total_tokens": 228,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.00004725,
+      "meal": {
+        "calories": 1120,
+        "protein": 60,
+        "fiber": 16,
+        "carbs": 136,
+        "fat": 36,
+        "name": "Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 1120,
+          "actual": 1120,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 60,
+          "actual": 60,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 16,
+          "actual": 16,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "label-4",
+      "category": "label",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 1042,
+      "usage": {
+        "prompt_tokens": 198,
+        "completion_tokens": 37,
+        "total_tokens": 235,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000084,
+      "meal": {
+        "calories": 1120,
+        "protein": 60,
+        "fiber": 16,
+        "carbs": 136,
+        "fat": 36,
+        "name": "Four Cups Lasagna"
+      },
+      "scores": {
+        "calories": {
+          "expected": 1120,
+          "actual": 1120,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 60,
+          "actual": 60,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 16,
+          "actual": 16,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "apple",
+      "category": "food-reference",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 1022,
+      "usage": {
+        "prompt_tokens": 173,
+        "completion_tokens": 42,
+        "total_tokens": 215,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000085,
+      "meal": {
+        "calories": 126,
+        "protein": 0.8,
+        "fiber": 5.5,
+        "carbs": 33.6,
+        "fat": 0.4,
+        "name": "Raw Apple"
+      },
+      "scores": {
+        "calories": {
+          "expected": 130,
+          "actual": 126,
+          "error": -4,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 0.8,
+          "error": -0.19999999999999996,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 5,
+          "actual": 5.5,
+          "error": 0.5,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "apple",
+      "category": "food-reference",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 880,
+      "usage": {
+        "prompt_tokens": 174,
+        "completion_tokens": 36,
+        "total_tokens": 210,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000047699999999999994,
+      "meal": {
+        "calories": 126,
+        "protein": 0.6,
+        "fiber": 5.4,
+        "carbs": 33.6,
+        "fat": 0.4,
+        "name": "Raw Apple"
+      },
+      "scores": {
+        "calories": {
+          "expected": 130,
+          "actual": 126,
+          "error": -4,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 0.6,
+          "error": -0.4,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 5,
+          "actual": 5.4,
+          "error": 0.40000000000000036,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "banana",
+      "category": "food-reference",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 790,
+      "usage": {
+        "prompt_tokens": 174,
+        "completion_tokens": 36,
+        "total_tokens": 210,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000047699999999999994,
+      "meal": {
+        "calories": 112,
+        "protein": 1.3,
+        "fiber": 3.1,
+        "carbs": 28.8,
+        "fat": 0.3,
+        "name": "Raw Banana"
+      },
+      "scores": {
+        "calories": {
+          "expected": 110,
+          "actual": 112,
+          "error": 2,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1.3,
+          "error": 0.30000000000000004,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 3,
+          "actual": 3.1,
+          "error": 0.10000000000000009,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "banana",
+      "category": "food-reference",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 990,
+      "usage": {
+        "prompt_tokens": 173,
+        "completion_tokens": 44,
+        "total_tokens": 217,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.00008740000000000001,
+      "meal": {
+        "calories": 112.14,
+        "protein": 1.37,
+        "fiber": 2.91,
+        "carbs": 28.72,
+        "fat": 0.41,
+        "name": "Raw Banana"
+      },
+      "scores": {
+        "calories": {
+          "expected": 110,
+          "actual": 112.14,
+          "error": 2.1400000000000006,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1.37,
+          "error": 0.3700000000000001,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 3,
+          "actual": 2.91,
+          "error": -0.08999999999999986,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "orange",
+      "category": "food-reference",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 1141,
+      "usage": {
+        "prompt_tokens": 173,
+        "completion_tokens": 44,
+        "total_tokens": 217,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.00008740000000000001,
+      "meal": {
+        "calories": 73,
+        "protein": 1.4,
+        "fiber": 3.7,
+        "carbs": 18.4,
+        "fat": 0.2,
+        "name": "Raw Orange"
+      },
+      "scores": {
+        "calories": {
+          "expected": 80,
+          "actual": 73,
+          "error": -7,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1.4,
+          "error": 0.3999999999999999,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 3,
+          "actual": 3.7,
+          "error": 0.7000000000000002,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "orange",
+      "category": "food-reference",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 749,
+      "usage": {
+        "prompt_tokens": 174,
+        "completion_tokens": 36,
+        "total_tokens": 210,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000047699999999999994,
+      "meal": {
+        "calories": 62,
+        "protein": 1.2,
+        "fiber": 3.1,
+        "carbs": 15.4,
+        "fat": 0.2,
+        "name": "Raw Orange"
+      },
+      "scores": {
+        "calories": {
+          "expected": 80,
+          "actual": 62,
+          "error": -18,
+          "pass": false
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1.2,
+          "error": 0.19999999999999996,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 3,
+          "actual": 3.1,
+          "error": 0.10000000000000009,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "pear",
+      "category": "food-reference",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 745,
+      "usage": {
+        "prompt_tokens": 174,
+        "completion_tokens": 36,
+        "total_tokens": 210,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000047699999999999994,
+      "meal": {
+        "calories": 100,
+        "protein": 0.5,
+        "fiber": 5.1,
+        "carbs": 27.6,
+        "fat": 0.3,
+        "name": "Raw Pear"
+      },
+      "scores": {
+        "calories": {
+          "expected": 100,
+          "actual": 100,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 0.5,
+          "error": -0.5,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 6,
+          "actual": 5.1,
+          "error": -0.9000000000000004,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "pear",
+      "category": "food-reference",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 1248,
+      "usage": {
+        "prompt_tokens": 173,
+        "completion_tokens": 42,
+        "total_tokens": 215,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000085,
+      "meal": {
+        "calories": 95,
+        "protein": 0.6,
+        "fiber": 5.1,
+        "carbs": 25.3,
+        "fat": 0.2,
+        "name": "Raw Pear"
+      },
+      "scores": {
+        "calories": {
+          "expected": 100,
+          "actual": 95,
+          "error": -5,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 0.6,
+          "error": -0.4,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 6,
+          "actual": 5.1,
+          "error": -0.9000000000000004,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "strawberries",
+      "category": "food-reference",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 1162,
+      "usage": {
+        "prompt_tokens": 173,
+        "completion_tokens": 41,
+        "total_tokens": 214,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.00008379999999999999,
+      "meal": {
+        "calories": 47,
+        "protein": 1,
+        "fiber": 2.9,
+        "carbs": 11.3,
+        "fat": 0.5,
+        "name": "Raw Strawberries"
+      },
+      "scores": {
+        "calories": {
+          "expected": 50,
+          "actual": 47,
+          "error": -3,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 2,
+          "actual": 2.9,
+          "error": 0.8999999999999999,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "strawberries",
+      "category": "food-reference",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 819,
+      "usage": {
+        "prompt_tokens": 174,
+        "completion_tokens": 37,
+        "total_tokens": 211,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000048299999999999995,
+      "meal": {
+        "calories": 49,
+        "protein": 1.02,
+        "fiber": 3,
+        "carbs": 11.66,
+        "fat": 0.3,
+        "name": "Raw Strawberries"
+      },
+      "scores": {
+        "calories": {
+          "expected": 50,
+          "actual": 49,
+          "error": -1,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1.02,
+          "error": 0.020000000000000018,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 2,
+          "actual": 3,
+          "error": 1,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "kiwifruit",
+      "category": "food-reference",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 869,
+      "usage": {
+        "prompt_tokens": 177,
+        "completion_tokens": 39,
+        "total_tokens": 216,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.00004995,
+      "meal": {
+        "calories": 61,
+        "protein": 1.14,
+        "fiber": 3,
+        "carbs": 14.66,
+        "fat": 0.52,
+        "name": "Raw Kiwifruit"
+      },
+      "scores": {
+        "calories": {
+          "expected": 90,
+          "actual": 61,
+          "error": -29,
+          "pass": false
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1.14,
+          "error": 0.1399999999999999,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 4,
+          "actual": 3,
+          "error": -1,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "kiwifruit",
+      "category": "food-reference",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 993,
+      "usage": {
+        "prompt_tokens": 176,
+        "completion_tokens": 45,
+        "total_tokens": 221,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000892,
+      "meal": {
+        "calories": 90,
+        "protein": 1.6,
+        "fiber": 4.4,
+        "carbs": 21.7,
+        "fat": 0.7,
+        "name": "Raw Kiwifruit"
+      },
+      "scores": {
+        "calories": {
+          "expected": 90,
+          "actual": 90,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 1,
+          "actual": 1.6,
+          "error": 0.6000000000000001,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 4,
+          "actual": 4.4,
+          "error": 0.40000000000000036,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "half-bar",
+      "category": "synthetic-contract",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 948,
+      "usage": {
+        "prompt_tokens": 195,
+        "completion_tokens": 39,
+        "total_tokens": 234,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000858,
+      "meal": {
+        "calories": 105,
+        "protein": 10,
+        "fiber": 3.5,
+        "carbs": 11.5,
+        "fat": 4,
+        "name": "Half Protein Bar"
+      },
+      "scores": {
+        "calories": {
+          "expected": 105,
+          "actual": 105,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 10,
+          "actual": 10,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 3.5,
+          "actual": 3.5,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "half-bar",
+      "category": "synthetic-contract",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 916,
+      "usage": {
+        "prompt_tokens": 196,
+        "completion_tokens": 33,
+        "total_tokens": 229,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000492,
+      "meal": {
+        "calories": 105,
+        "protein": 10,
+        "fiber": 3.5,
+        "carbs": 11.5,
+        "fat": 4,
+        "name": "Half Protein Bar"
+      },
+      "scores": {
+        "calories": {
+          "expected": 105,
+          "actual": 105,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 10,
+          "actual": 10,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 3.5,
+          "actual": 3.5,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "shake",
+      "category": "synthetic-contract",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 840,
+      "usage": {
+        "prompt_tokens": 231,
+        "completion_tokens": 31,
+        "total_tokens": 262,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.00005325,
+      "meal": {
+        "calories": 210,
+        "protein": 27,
+        "fiber": 2,
+        "carbs": 8,
+        "fat": 4,
+        "name": "Milk and Protein Powder Shake"
+      },
+      "scores": {
+        "calories": {
+          "expected": 270,
+          "actual": 210,
+          "error": -60,
+          "pass": false
+        },
+        "protein": {
+          "expected": 31.5,
+          "actual": 27,
+          "error": -4.5,
+          "pass": false
+        },
+        "fiber": {
+          "expected": 2,
+          "actual": 2,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "shake",
+      "category": "synthetic-contract",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 921,
+      "usage": {
+        "prompt_tokens": 230,
+        "completion_tokens": 41,
+        "total_tokens": 271,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.00009519999999999998,
+      "meal": {
+        "calories": 270,
+        "protein": 31.5,
+        "fiber": 2,
+        "carbs": 15.5,
+        "fat": 8.5,
+        "name": "Milk Protein Powder"
+      },
+      "scores": {
+        "calories": {
+          "expected": 270,
+          "actual": 270,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 31.5,
+          "actual": 31.5,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 2,
+          "actual": 2,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "missing-fiber",
+      "category": "synthetic-contract",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 785,
+      "usage": {
+        "prompt_tokens": 195,
+        "completion_tokens": 35,
+        "total_tokens": 230,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000081,
+      "meal": {
+        "calories": 300,
+        "protein": 25,
+        "name": "Experimental Meal Pack"
+      },
+      "scores": {
+        "calories": {
+          "expected": 300,
+          "actual": 300,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 25,
+          "actual": 25,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": null,
+          "actual": null,
+          "error": null,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "missing-fiber",
+      "category": "synthetic-contract",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 683,
+      "usage": {
+        "prompt_tokens": 196,
+        "completion_tokens": 29,
+        "total_tokens": 225,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000468,
+      "meal": {
+        "calories": 300,
+        "protein": 25,
+        "name": "Experimental Meal Pack"
+      },
+      "scores": {
+        "calories": {
+          "expected": 300,
+          "actual": 300,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 25,
+          "actual": 25,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": null,
+          "actual": null,
+          "error": null,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "zero",
+      "category": "synthetic-contract",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 688,
+      "usage": {
+        "prompt_tokens": 190,
+        "completion_tokens": 30,
+        "total_tokens": 220,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000465,
+      "meal": {
+        "calories": 0,
+        "protein": 0,
+        "fiber": 0,
+        "carbs": 0,
+        "fat": 0,
+        "name": "Zero Calorie Beverage"
+      },
+      "scores": {
+        "calories": {
+          "expected": 0,
+          "actual": 0,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 0,
+          "actual": 0,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 0,
+          "actual": 0,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "zero",
+      "category": "synthetic-contract",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 1242,
+      "usage": {
+        "prompt_tokens": 189,
+        "completion_tokens": 36,
+        "total_tokens": 225,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000081,
+      "meal": {
+        "calories": 0,
+        "protein": 0,
+        "fiber": 0,
+        "carbs": 0,
+        "fat": 0,
+        "name": "Zero-Calorie Beverage"
+      },
+      "scores": {
+        "calories": {
+          "expected": 0,
+          "actual": 0,
+          "error": 0,
+          "pass": true
+        },
+        "protein": {
+          "expected": 0,
+          "actual": 0,
+          "error": 0,
+          "pass": true
+        },
+        "fiber": {
+          "expected": 0,
+          "actual": 0,
+          "error": 0,
+          "pass": true
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "vague-shake",
+      "category": "indeterminate",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 964,
+      "usage": {
+        "prompt_tokens": 166,
+        "completion_tokens": 35,
+        "total_tokens": 201,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000752,
+      "meal": {
+        "calories": 250,
+        "protein": 32,
+        "fiber": 1,
+        "carbs": 20,
+        "fat": 5,
+        "name": "Protein Powder Milk"
+      },
+      "scores": null
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "vague-shake",
+      "category": "indeterminate",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 844,
+      "usage": {
+        "prompt_tokens": 167,
+        "completion_tokens": 30,
+        "total_tokens": 197,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000043049999999999996,
+      "meal": {
+        "calories": 300,
+        "protein": 30,
+        "carbs": 15,
+        "fat": 5,
+        "name": "Milk with Protein Powder"
+      },
+      "scores": null
+    },
+    {
+      "model": "gpt-4o-mini",
+      "responseModel": "gpt-4o-mini-2024-07-18",
+      "fixture": "vague-dinner",
+      "category": "indeterminate",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 729,
+      "usage": {
+        "prompt_tokens": 170,
+        "completion_tokens": 30,
+        "total_tokens": 200,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.0000435,
+      "meal": {
+        "calories": 600,
+        "protein": 40,
+        "fiber": 10,
+        "carbs": 70,
+        "fat": 15,
+        "name": "Chicken Rice and Beans"
+      },
+      "scores": null
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "responseModel": "gpt-5.6-luna",
+      "fixture": "vague-dinner",
+      "category": "indeterminate",
+      "round": 1,
+      "outcome": "success",
+      "durationMs": 958,
+      "usage": {
+        "prompt_tokens": 169,
+        "completion_tokens": 36,
+        "total_tokens": 205,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "costUsd": 0.000077,
+      "meal": {
+        "calories": 650,
+        "protein": 39,
+        "fiber": 12,
+        "carbs": 82,
+        "fat": 17,
+        "name": "Chicken Rice and Beans"
+      },
+      "scores": null
+    }
+  ],
+  "knownCostUsd": 0.0042129
+}

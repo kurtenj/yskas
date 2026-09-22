@@ -6,7 +6,7 @@ The dashboard shows calories remaining plus protein and fiber gram totals. Its 5
 
 ## Stack and routes
 
-Next.js 16 / React 19, Convex, Tailwind CSS 4, Motion, Phosphor icons and Base UI. OpenAI `gpt-4o-mini` estimates nutrition; ElevenLabs `scribe_v1` transcribes voice input.
+Next.js 16 / React 19, Convex, Tailwind CSS 4, Motion, Phosphor icons and Base UI. OpenAI `gpt-5.6-luna` estimates nutrition with reasoning disabled; ElevenLabs `scribe_v1` transcribes voice input. See [the Luna comparison](docs/milestone-5-luna-pilot.md) for evaluation results and reproduction commands.
 
 | Route | Purpose |
 | --- | --- |
