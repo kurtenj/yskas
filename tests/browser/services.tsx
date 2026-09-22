@@ -130,7 +130,12 @@ export function useRouter() {
   };
 }
 export function useUser() {
-  return { userId: user._id, clearUser() {}, setUserId() {} };
+  return {
+    userId: user._id,
+    // Storage semantics are covered separately; this adapter records UI intent.
+    clearUser() { calls.push({ name: "profile:clear", args: {} }); },
+    setUserId(id: string) { calls.push({ name: "profile:select", args: { id } }); },
+  };
 }
 export function redirect(url: string): never {
   throw new Error(`Redirect ${url}`);

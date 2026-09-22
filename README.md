@@ -83,6 +83,18 @@ Daily totals include every meal for the selected day. Suggestions use the latest
 
 ## Verification
 
+Use Node.js 24. From a clean checkout, no `.env` file or production credentials are required:
+
+```powershell
+npm ci
+npx playwright install chromium --only-shell
+npm run verify
+```
+
+On Linux, install browser system libraries with `npx playwright install --with-deps chromium --only-shell`. `verify` runs the Node and unit/backend tests, warning-free lint, build, TypeScript and browser regressions sequentially and stops on failure. It uses a loopback Convex URL for prerendering; **do not deploy the verification build**. Run the normal configured `npm run build` for an application deployment. The [Verify workflow](.github/workflows/verify.yml) runs the same command on pull requests and main, with no provider keys or deployment steps.
+
+Individual checks remain available:
+
 ```powershell
 npm test
 npx playwright install chromium --only-shell   # first browser-test setup
