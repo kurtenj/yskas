@@ -66,8 +66,8 @@ export async function estimateMeal(
     const response = await client.chat.completions.create(
       {
         model: ESTIMATE_VERSION.model,
-        temperature: 0.2,
-        max_tokens: ESTIMATE_OUTPUT_TOKENS,
+        reasoning_effort: "none",
+        max_completion_tokens: ESTIMATE_OUTPUT_TOKENS,
         messages: [
           { role: "system", content: ESTIMATE_PROMPT },
           { role: "user", content: description },

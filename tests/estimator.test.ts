@@ -83,9 +83,14 @@ test("strict request uses bounded output and provider usage; missing usage remai
   );
   expect(result).toMatchObject({ calories: 200.5, fiber: 8.7 });
   expect(create.mock.lastCall?.[0]).toMatchObject({
-    max_tokens: ESTIMATE_OUTPUT_TOKENS,
+    model: "gpt-5.6-luna",
+    reasoning_effort: "none",
+    max_completion_tokens: ESTIMATE_OUTPUT_TOKENS,
     response_format: { json_schema: { strict: true } },
   });
+  expect(create.mock.lastCall?.[0]).not.toHaveProperty("temperature");
+  expect(create.mock.lastCall?.[0]).not.toHaveProperty("max_tokens");
+  expect(result.estimate.model).toBe("gpt-5.6-luna");
   expect(JSON.parse(log.mock.calls[0][0]).provider.inputTokens).toBeNull();
 });
 test("timeout and caller cancellation remain distinguishable", () => {

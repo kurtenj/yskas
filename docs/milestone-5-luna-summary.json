@@ -1,0 +1,242 @@
+{
+  "measuredAt": "2026-09-22T00:04:52.133Z",
+  "knownCostUsd": 0.0042129,
+  "models": {
+    "gpt-4o-mini": {
+      "requests": 32,
+      "valid": 32,
+      "missingCost": 0,
+      "knownCostUsd": 0.0015236999999999998,
+      "p50Ms": 828,
+      "sampleP95Ms": 1490,
+      "groups": {
+        "label": {
+          "requests": 8,
+          "valid": 8,
+          "nutrients": {
+            "calories": {
+              "graded": 8,
+              "pass": 8,
+              "numericSamples": 8,
+              "mae": 0,
+              "bias": 0
+            },
+            "protein": {
+              "graded": 8,
+              "pass": 8,
+              "numericSamples": 8,
+              "mae": 0,
+              "bias": 0
+            },
+            "fiber": {
+              "graded": 8,
+              "pass": 8,
+              "numericSamples": 8,
+              "mae": 0,
+              "bias": 0
+            }
+          }
+        },
+        "food-reference": {
+          "requests": 12,
+          "valid": 12,
+          "nutrients": {
+            "calories": {
+              "graded": 12,
+              "pass": 8,
+              "numericSamples": 12,
+              "mae": 9,
+              "bias": -8.333333333333334
+            },
+            "protein": {
+              "graded": 12,
+              "pass": 12,
+              "numericSamples": 12,
+              "mae": 0.26,
+              "bias": -0.040000000000000015
+            },
+            "fiber": {
+              "graded": 12,
+              "pass": 12,
+              "numericSamples": 12,
+              "mae": 0.5833333333333335,
+              "bias": -0.04999999999999997
+            }
+          }
+        },
+        "synthetic-contract": {
+          "requests": 8,
+          "valid": 8,
+          "nutrients": {
+            "calories": {
+              "graded": 8,
+              "pass": 6,
+              "numericSamples": 8,
+              "mae": 15,
+              "bias": -15
+            },
+            "protein": {
+              "graded": 8,
+              "pass": 6,
+              "numericSamples": 8,
+              "mae": 1.125,
+              "bias": -1.125
+            },
+            "fiber": {
+              "graded": 8,
+              "pass": 8,
+              "numericSamples": 6,
+              "mae": 0,
+              "bias": 0
+            }
+          }
+        },
+        "indeterminate": {
+          "requests": 4,
+          "valid": 4,
+          "nutrients": {
+            "calories": {
+              "graded": 0,
+              "pass": 0,
+              "numericSamples": 0,
+              "mae": null,
+              "bias": null
+            },
+            "protein": {
+              "graded": 0,
+              "pass": 0,
+              "numericSamples": 0,
+              "mae": null,
+              "bias": null
+            },
+            "fiber": {
+              "graded": 0,
+              "pass": 0,
+              "numericSamples": 0,
+              "mae": null,
+              "bias": null
+            }
+          }
+        }
+      }
+    },
+    "gpt-5.6-luna": {
+      "requests": 32,
+      "valid": 32,
+      "missingCost": 0,
+      "knownCostUsd": 0.0026892000000000005,
+      "p50Ms": 1023,
+      "sampleP95Ms": 1359,
+      "groups": {
+        "label": {
+          "requests": 8,
+          "valid": 8,
+          "nutrients": {
+            "calories": {
+              "graded": 8,
+              "pass": 8,
+              "numericSamples": 8,
+              "mae": 0,
+              "bias": 0
+            },
+            "protein": {
+              "graded": 8,
+              "pass": 8,
+              "numericSamples": 8,
+              "mae": 0,
+              "bias": 0
+            },
+            "fiber": {
+              "graded": 8,
+              "pass": 8,
+              "numericSamples": 8,
+              "mae": 0,
+              "bias": 0
+            }
+          }
+        },
+        "food-reference": {
+          "requests": 12,
+          "valid": 12,
+          "nutrients": {
+            "calories": {
+              "graded": 12,
+              "pass": 12,
+              "numericSamples": 12,
+              "mae": 3.5233333333333334,
+              "bias": -2.81
+            },
+            "protein": {
+              "graded": 12,
+              "pass": 12,
+              "numericSamples": 12,
+              "mae": 0.3383333333333334,
+              "bias": 0.13833333333333334
+            },
+            "fiber": {
+              "graded": 12,
+              "pass": 12,
+              "numericSamples": 12,
+              "mae": 0.6291666666666669,
+              "bias": 0.30416666666666675
+            }
+          }
+        },
+        "synthetic-contract": {
+          "requests": 8,
+          "valid": 8,
+          "nutrients": {
+            "calories": {
+              "graded": 8,
+              "pass": 8,
+              "numericSamples": 8,
+              "mae": 0,
+              "bias": 0
+            },
+            "protein": {
+              "graded": 8,
+              "pass": 8,
+              "numericSamples": 8,
+              "mae": 0,
+              "bias": 0
+            },
+            "fiber": {
+              "graded": 8,
+              "pass": 8,
+              "numericSamples": 6,
+              "mae": 0,
+              "bias": 0
+            }
+          }
+        },
+        "indeterminate": {
+          "requests": 4,
+          "valid": 4,
+          "nutrients": {
+            "calories": {
+              "graded": 0,
+              "pass": 0,
+              "numericSamples": 0,
+              "mae": null,
+              "bias": null
+            },
+            "protein": {
+              "graded": 0,
+              "pass": 0,
+              "numericSamples": 0,
+              "mae": null,
+              "bias": null
+            },
+            "fiber": {
+              "graded": 0,
+              "pass": 0,
+              "numericSamples": 0,
+              "mae": null,
+              "bias": null
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,17 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { summarize } from "../scripts/meal-metrics.mjs";
+test("mixed model costs retain historical rates and charge Luna cached tokens", () => {
+  const event = { event: "meal_entry", version: 1, source: "server", stage: "estimate", attempt: 1 };
+  const provider = { inputTokens: 100, outputTokens: 50, cachedTokens: 40 };
+  const report = summarize([
+    { ...event, provider: { ...provider, model: "gpt-4o-mini" } },
+    { ...event, provider: { ...provider, model: "gpt-5.6-luna" } },
+  ]);
+  assert.ok(Math.abs(report.textCostUsd - 0.0001148) < 1e-10);
+  assert.equal(report.attemptsMissingUsage, 0);
+  assert.equal(summarize([{ ...event, provider: { ...provider, model: "unknown" } }]).textCostUsd, null);
+});
 test("metrics do not call missing usage or missing accepted meals zero", () => {
   const report = summarize([
     {
